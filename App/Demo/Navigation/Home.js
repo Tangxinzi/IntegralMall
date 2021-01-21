@@ -69,11 +69,11 @@ class Home extends React.Component {
   }
 
   fetchData() {
-    fetch(`https://www.baimapictures.com/wp-json/wp/v2/posts?_embed=true&page=1&per_page=1&filter[category_name]=carousel`)
+    fetch(`https://taupd.ferer.net/v1/api/catalog?data=pages&page_catalog_id=267`)
     .then(response => response.json())
     .then(responseData => {
       this.setState({
-        data: responseData
+        data: responseData.data
       });
     })
     .catch((error) => {
@@ -100,99 +100,86 @@ class Home extends React.Component {
     if (this.state.data.length) {
       return (
         <ScrollView>
-          <Animated.ScrollView
-            onScroll={
-              Animated.event(
-                [{
-                  nativeEvent: { contentOffset: { y: this.state.scrollY } }
-                }],
-                { useNativeDriver: true }
-              )
-            }
-            scrollEventThrottle={1}
-            style={styles.container}
-          >
-            <View style={styles.backgroundSwiper}></View>
-            <View style={styles.swiperContainer}>
-              <ViewSwiper
-                autoplay
-                autoplayTimeout={6}
-                dot={<View style={{backgroundColor: 'rgba(255, 255, 255, 0.5)', width: 20, height: 3}} />}
-                activeDot={<View style={{backgroundColor: '#ffffff', width: 20, height: 3}} />}
-                paginationStyle={{bottom: 10}}
+          <View style={styles.backgroundSwiper}></View>
+          <View style={styles.swiperContainer}>
+            <ViewSwiper
+              autoplay
+              autoplayTimeout={6}
+              dot={<View style={{backgroundColor: 'rgba(255, 255, 255, 0.5)', width: 20, height: 3}} />}
+              activeDot={<View style={{backgroundColor: '#ffffff', width: 20, height: 3}} />}
+              paginationStyle={{bottom: 10}}
+            >
+              {
+                this.state.data.map((item, key) => {
+                  return (
+                    <TouchableHighlight
+                      key={key}
+                      style={styles.swiperTouch}
+                      activeOpacity={0.9}
+                    >
+                      <Image resizeMode='cover' style={styles.swiperImage} source={{uri: item.page_main_img}} />
+                    </TouchableHighlight>
+                  )
+                })
+              }
+            </ViewSwiper>
+          </View>
+          <View style={[iconStyle.iconContainer, {marginTop: 15, paddingTop: 10}]}>
+            <View style={iconStyle.iconApps}>
+              {
+                this.state.icons.map((item, key) => {
+                  return (
+                    <TouchableHighlight
+                      key={key}
+                      style={iconStyle.iconTouch}
+                      underlayColor="rgba(255, 255, 255, 0.85)"
+                      activeOpacity={0.85}
+                      onPress={() => {
+                        this.props.navigation.navigate(item.route)
+                      }}
+                    >
+                      <>
+                        <Image resizeMode='cover' style={[iconStyle.icon, { marginLeft: 8, marginRight: 8 }]} source={{uri: item.img}} />
+                        <Text allowFontScaling={false} style={iconStyle.iconText}>{item.text}</Text>
+                      </>
+                    </TouchableHighlight>
+                  )
+                })
+              }
+            </View>
+          </View>
+          <FlatList
+            data={this.state.business}
+            horizontal={false}
+            numColumns={2}
+            columnWrapperStyle={styles.columnStyle}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item, index}) =>
+              <TouchableHighlight
+                underlayColor='transparent'
+                style={[styles.lotteryTouch, index % 2 ? styles.lotteryTouchmarginLeft10 : '']}
+                onPress={() => {
+                  this.props.navigation.navigate('LotteryDetails', { id: item.id, title: item.product_name })
+                }}
+                underlayColor="rgba(255, 255, 255, 0.85)"
+                activeOpacity={0.9}
               >
-                {
-                  this.state.data.map((item, key) => {
-                    return (
-                      <TouchableHighlight
-                        key={key}
-                        style={styles.swiperTouch}
-                        activeOpacity={0.9}
-                      >
-                        <Image resizeMode='cover' style={styles.swiperImage} source={{uri: item._embedded['wp:featuredmedia'][0].source_url}} />
-                      </TouchableHighlight>
-                    )
-                  })
-                }
-              </ViewSwiper>
-            </View>
-            <View style={[iconStyle.iconContainer, {marginTop: 15, paddingTop: 10}]}>
-              <View style={iconStyle.iconApps}>
-                {
-                  this.state.icons.map((item, key) => {
-                    return (
-                      <TouchableHighlight
-                        key={key}
-                        style={iconStyle.iconTouch}
-                        underlayColor="rgba(255, 255, 255, 0.85)"
-                        activeOpacity={0.85}
-                        onPress={() => {
-                          this.props.navigation.navigate(item.route)
-                        }}
-                      >
-                        <>
-                          <Image resizeMode='cover' style={iconStyle.icon} source={{uri: item.img}} />
-                          <Text allowFontScaling={false} style={iconStyle.iconText}>{item.text}</Text>
-                        </>
-                      </TouchableHighlight>
-                    )
-                  })
-                }
-              </View>
-            </View>
-            <FlatList
-              data={this.state.business}
-              horizontal={false}
-              numColumns={2}
-              columnWrapperStyle={styles.columnStyle}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item, index}) =>
-                <TouchableHighlight
-                  underlayColor='transparent'
-                  style={[styles.lotteryTouch, index % 2 ? styles.lotteryTouchmarginLeft10 : '']}
-                  onPress={() => {
-                    this.props.navigation.navigate('LotteryDetails', { id: item.id, title: item.product_name })
-                  }}
-                  underlayColor="rgba(255, 255, 255, 0.85)"
-                  activeOpacity={0.9}
-                >
-                  <>
-                    <Image resizeMode='cover' style={styles.lotteryLottery_img} source={{uri: item.product_image}} />
-                    <View style={styles.lotteryFoot}>
-                      <Text allowFontScaling={false} style={styles.lotteryLottery_name} numberOfLines={2}>{item.product_name}</Text>
-                      <Text allowFontScaling={false} style={styles.lotteryLottery_description} numberOfLines={1}>{item.product_business_description}</Text>
-                      <View style={styles.lotteryFooter}>
-                        <Text allowFontScaling={false} style={styles.lotteryFinish_quantity}>{'¥' + (item.product_business_discount ? item.product_business_discount : item.product_business_price)}</Text>
-                        <View style={styles.lotteryBuy}>
-                          <Text allowFontScaling={false} style={styles.lotteryBuyText}>加入</Text>
-                        </View>
+                <>
+                  <Image resizeMode='cover' style={styles.lotteryLottery_img} source={{uri: item.product_image}} />
+                  <View style={styles.lotteryFoot}>
+                    <Text allowFontScaling={false} style={styles.lotteryLottery_name} numberOfLines={2}>{item.product_name}</Text>
+                    <Text allowFontScaling={false} style={styles.lotteryLottery_description} numberOfLines={1}>{item.product_business_description}</Text>
+                    <View style={styles.lotteryFooter}>
+                      <Text allowFontScaling={false} style={styles.lotteryFinish_quantity}>{'¥' + (item.product_business_discount ? item.product_business_discount : item.product_business_price)}</Text>
+                      <View style={styles.lotteryBuy}>
+                        <Text allowFontScaling={false} style={styles.lotteryBuyText}>加入</Text>
                       </View>
                     </View>
-                  </>
-                </TouchableHighlight>
-              }
-            />
-          </Animated.ScrollView>
+                  </View>
+                </>
+              </TouchableHighlight>
+            }
+          />
         </ScrollView>
       );
     }
@@ -220,14 +207,14 @@ const styles = {
   backgroundSwiper: {
     position: 'absolute',
     backgroundColor: '#ffd600',
-    top: -Dimensions.get('window').width * 1.4,
+    top: -Dimensions.get('window').width * 1.45,
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width * 2,
+    height: Dimensions.get('window').width * 1.8,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20
   },
   swiperContainer: {
-    height: Dimensions.get('window').width / 2,
+    height: Dimensions.get('window').width / 2.2,
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 3,
@@ -240,7 +227,7 @@ const styles = {
   swiperImage: {
     width: '100%',
     borderRadius: 10,
-    height: Dimensions.get('window').width / 2
+    height: Dimensions.get('window').width / 2.2
   },
   columnStyle: {
     marginLeft: 10,

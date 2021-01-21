@@ -23,20 +23,32 @@ class User extends React.Component {
     this.state = {
       list: [],
       details: [],
-      active: '5d3912da9bbe3147969a4ad1'
+      catalogs: {},
+      id: 274
     };
     this.fetchDataList();
-    this.fetchDataDetail(this.state.active);
+    this.fetchDataDetail(this.state.id);
+  }
+
+  componentDidMount() {
+    this._navListener = this.props.navigation.addListener('didFocus', () => {
+      this.fetchDataList();
+      this.fetchDataDetail(this.state.id);
+    });
+  }
+
+  componentWillUnmount() {
+    this._navListener.remove();
   }
 
   fetchDataList() {
-    fetch(`https://app.xiaomiyoupin.com/mtop/mf/cat/list`, {
-      method: 'POST',
+    // 买卖产品目录
+    fetch(`https://taupd.ferer.net/v1/api/catalog?data=catalogs&catalog_group_id=272`, {
+      method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify([{},{}])
+      }
     })
     .then(response => response.json())
     .then(responseData => {
@@ -50,20 +62,20 @@ class User extends React.Component {
     .done();
   }
 
-  fetchDataDetail(catId) {
-    fetch(`https://app.xiaomiyoupin.com/mtop/mf/cat/detail`, {
-      method: 'POST',
+  fetchDataDetail(id) {
+    fetch(`https://taupd.ferer.net/v1/api/catalog?data=products&product_type=business&product_business_catalog=${ id }`, {
+      method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify([{},{"catId":catId}])
+      }
     })
     .then(response => response.json())
     .then(responseData => {
       this.setState({
+        id,
         details: responseData.data,
-        active: catId,
+        catalogs: responseData.data.catalogs
       });
     })
     .catch((error) => {
@@ -84,47 +96,37 @@ class User extends React.Component {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) =>
               <TouchableHighlight
-                style={[styles.listTouch, this.state.active === item.id ? styles.listTouchActive : '']}
+                style={[styles.listTouch, this.state.id === item.id ? styles.listTouchActive : '']}
                 underlayColor="rgba(34, 26, 38, 0.5)"
                 onPress={() => this.fetchDataDetail(item.id)}
               >
-                <>
-                  <Text style={[styles.listName, this.state.active == item.id ? styles.listNameActive : '']}>{item.name}</Text>
-                </>
+                <Text style={[styles.listName, this.state.id == item.id ? styles.listNameActive : '']}>{item.catalog_name}</Text>
               </TouchableHighlight>
             }
           />
           <ScrollView style={styles.detailContainer}>
-            <View style={styles.detailBanner}>
-              <Image style={styles.detailBannerUrl} source={{uri: this.state.details.banner}} />
+            <View style={styles.header}>
+              <Text style={styles.headerText}>{this.state.catalogs.catalog_detail}</Text>
             </View>
             <FlatList
-              data={this.state.details.children}
+              data={this.state.details.products}
               horizontal={false}
+              numColumns={3}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) =>
-                <View style={iconStyle.iconContainerBottom0}>
-                  <View style={iconStyle.iconHeader}>
-                    <Text style={iconStyle.iconHeaderText}>{item.name}</Text>
-                  </View>
-                  <FlatList
-                    data={item.children}
-                    horizontal={false}
-                    numColumns={3}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({item, index}) =>
-                      <TouchableHighlight
-                        style={[iconStyle.iconTouch3, styles.iconTouch3, iconStyle.iconTouchBottom20]}
-                        underlayColor="rgba(34, 26, 38, 0.5)"
-                      >
-                        <>
-                          <Image resizeMode='cover' style={[iconStyle.icon, styles.icon]} source={{uri: item.smallImgCard.img}} />
-                          <Text style={[iconStyle.iconText, styles.iconText]}>{item.smallImgCard.name}</Text>
-                        </>
-                      </TouchableHighlight>
-                    }
-                  />
-                </View>
+                <TouchableHighlight
+                  style={[iconStyle.iconTouch3, styles.iconTouch3, iconStyle.iconTouchBottom20]}
+                  onPress={() => {
+                    this.props.navigation.navigate('LotteryDetails', { id: item.id, title: item.product_name })
+                  }}
+                  underlayColor="rgba(255, 255, 255, 0.85)"
+                  activeOpacity={0.9}
+                >
+                  <>
+                    <Image resizeMode='cover' style={[iconStyle.icon, styles.icon]} source={{uri: item.product_image}} />
+                    <Text style={[iconStyle.iconText, styles.iconText]} allowFontScaling={false} numberOfLines={1}>{item.product_name}</Text>
+                  </>
+                </TouchableHighlight>
               }
             />
           </ScrollView>
@@ -147,11 +149,13 @@ class User extends React.Component {
 const styles = {
   container: {
     position: 'relative',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    backgroundColor: '#FFF',
   },
   listContainer: {
     width: Dimensions.get('window').width * 0.25,
-    backgroundColor: '#FFF',
+    borderWidth: 0.5,
+    borderColor: '#CCC'
   },
   listTouch: {
     margin: 10,
@@ -171,6 +175,9 @@ const styles = {
     color: '#FFF'
   },
   detailContainer: {
+    width: Dimensions.get('window').width * 0.75,
+    height: Dimensions.get('window').height,
+    padding: 10
   },
   detailBannerUrl: {
     width: Dimensions.get('window').width * 0.75 - 20,
@@ -194,6 +201,11 @@ const styles = {
     textAlign: 'center',
     width: (Dimensions.get('window').width * 0.75 - 20) / 3
   },
+  headerText: {
+    width: '100%',
+    textAlign: 'center',
+    marginBottom: 10
+  }
 }
 
 module.exports = User;

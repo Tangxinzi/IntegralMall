@@ -23,6 +23,7 @@ import CartManage from './CartManage'
 import User from './User'
 import Login from './Login'
 import Integral from './Integral'
+import IntegralDetail from './IntegralDetail'
 import ConfirmOrder from './ConfirmOrder'
 import LotteryDetails from './LotteryDetails';
 import AnimatedTurnTableDraw from './AnimatedTurnTableDraw';
@@ -58,21 +59,11 @@ class HomeScreen extends React.Component {
       >
         <View>
           <TextInput
-            style={{ paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 80, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
-            placeholder='搜索'
+            inlineImageLeft='search_icon'
+            style={{ paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 20, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
+            placeholder=''
           />
         </View>
-      </TouchableHighlight>
-    ),
-    headerRight: (
-      <TouchableHighlight
-        style={{right: 10}}
-        underlayColor='transparent'
-      >
-        <Ionicons
-          name={'md-notifications-outline'}
-          size={26}
-        />
       </TouchableHighlight>
     ),
     tabBarVisible: false,
@@ -251,7 +242,7 @@ class ClassifyScreen extends React.Component {
           <TextInput
             inlineImageLeft='search_icon'
             style={{ paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 20, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
-            placeholder='分类'
+            placeholder=''
           />
         </View>
       </TouchableHighlight>
@@ -360,7 +351,7 @@ const BottomNavigatorScreen = createBottomTabNavigator({
 }, {
   mode: 'card',
   headerMode: 'none',
-  initialRouteName: 'Cart'
+  initialRouteName: 'Home'
 });
 
 const stackNavigator = createStackNavigator({
@@ -374,6 +365,7 @@ const stackNavigator = createStackNavigator({
   Web: { screen: Web },
   Login: { screen: Login },
   Integral: { screen: Integral },
+  IntegralDetail: { screen: IntegralDetail },
   ConfirmOrder: { screen: ConfirmOrder },
   LotteryDetails: { screen: LotteryDetails },
   AnimatedTurnTableDraw: { screen: AnimatedTurnTableDraw },

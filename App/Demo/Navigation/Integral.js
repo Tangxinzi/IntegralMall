@@ -182,30 +182,41 @@ class Integral extends React.PureComponent {
             {
               this.state.lottery.map((item, key) => {
                 return (
-                  <View style={styles.cartbox} key>
-                    <View style={styles.cartboxImageCon}>
-                      <View style={styles.multiple}>
-                        <Text allowFontScaling={false} style={{fontSize: 8.35, color: '#FFF'}}>{item.product_lottery_number}</Text>
-                      </View>
-                      <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
-                    </View>
-                    <View style={styles.cartboxCon}>
-                      <View style={styles.cartboxConHead}>
-                        <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
-                        <Text allowFontScaling={false} style={styles.conDetailMeta} numberOfLines={1}></Text>
-                      </View>
-                      <>
-                        <View style={styles.cartboxConFoot}>
-                          <Text allowFontScaling={false} style={styles.conDetailMeta} numberOfLines={1}>总需人次 {item.product_lottery_count}</Text>
-                          <Text allowFontScaling={false} style={styles.conDetailMeta} numberOfLines={1}>当前进度 {item.progress || 0}</Text>
+                  <TouchableHighlight
+                    keys={key}
+                    underlayColor='transparent'
+                    style={styles.cartbox}
+                    onPress={() => {
+                      this.props.navigation.navigate('IntegralDetail', { title: item.product_name, uri: 'https://taupd.ferer.net/mobile/user/lottery/detail/' + item.id + '?sign=' + this.state.user.token })
+                    }}
+                    underlayColor="rgba(255, 255, 255, 0.85)"
+                    activeOpacity={0.9}
+                  >
+                    <>
+                      <View style={styles.cartboxImageCon}>
+                        <View style={styles.multiple}>
+                          <Text allowFontScaling={false} style={{fontSize: 8.35, color: '#FFF'}}>{item.product_lottery_number}</Text>
                         </View>
-                        <View style={[styles.cartboxConFoot, {marginTop: 4}]}>
-                          <View style={styles.progress}></View>
-                          <View style={[styles.progressActive, {width: item.progress}]}></View>
+                        <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
+                      </View>
+                      <View style={styles.cartboxCon}>
+                        <View style={styles.cartboxConHead}>
+                          <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
+                          <Text allowFontScaling={false} style={styles.conDetailMeta} numberOfLines={1}></Text>
                         </View>
-                      </>
-                    </View>
-                  </View>
+                        <>
+                          <View style={styles.cartboxConFoot}>
+                            <Text allowFontScaling={false} style={styles.conDetailMeta} numberOfLines={1}>总需人次 {item.product_lottery_count}</Text>
+                            <Text allowFontScaling={false} style={styles.conDetailMeta} numberOfLines={1}>当前进度 {item.progress || 0}</Text>
+                          </View>
+                          <View style={[styles.cartboxConFoot, {marginTop: 4}]}>
+                            <View style={styles.progress}></View>
+                            <View style={[styles.progressActive, {width: item.progress}]}></View>
+                          </View>
+                        </>
+                      </View>
+                    </>
+                  </TouchableHighlight>
                 )
               })
             }
