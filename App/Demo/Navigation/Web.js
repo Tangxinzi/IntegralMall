@@ -34,6 +34,9 @@ class Web extends React.Component {
       }
       </>
     ),
+    headerStyle: {
+      elevation: 0,
+    },
   });
 
   constructor(props) {

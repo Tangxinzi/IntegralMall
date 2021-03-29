@@ -45,7 +45,7 @@ class CartManage extends React.Component {
         user: JSON.parse(response)
       })
       if (this.state.user.id) {
-        fetch(`http://0.0.0.0:8085/v1/api/carts?sign=` + this.state.user.token, {
+        fetch(`http://taupd.ferer.net/v1/api/carts?sign=` + this.state.user.token, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -143,7 +143,7 @@ class CartManage extends React.Component {
     }
 
     if (cart_id.length) {
-      fetch(`http://0.0.0.0:8085/v1/api/carts`, {
+      fetch(`http://taupd.ferer.net/v1/api/carts`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -174,34 +174,36 @@ class CartManage extends React.Component {
     return (
       <>
         <ScrollView>
-          {
-            this.state.carts.map((item, key) => {
-              return (
-                <View style={styles.cartbox}>
-                  <View style={styles.cartboxImageCon}>
-                    <TouchableHighlight
-                      activeOpacity={0.85}
-                      underlayColor="none"
-                      onPress={() => { this.setProductActive(key, item.cart_id) }}
-                    >
-                      <Ionicons name={item.active ? 'checkmark-circle-outline' : 'ellipse-outline'} size={22} color={item.active ? 'rgb(255, 140, 57)' : '#AAA'} />
-                    </TouchableHighlight>
-                    <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
-                  </View>
-                  <View style={styles.cartboxCon}>
-                    <View style={styles.cartboxConHead}>
-                      <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
-                      <Text allowFontScaling={false} style={styles.cartboxConDetail}></Text>
+          <View style={styles.cartboxContainer}>
+            {
+              this.state.carts.map((item, key) => {
+                return (
+                  <View style={styles.cartbox}>
+                    <View style={styles.cartboxImageCon}>
+                      <TouchableHighlight
+                        activeOpacity={0.85}
+                        underlayColor="none"
+                        onPress={() => { this.setProductActive(key, item.cart_id) }}
+                      >
+                        <Ionicons name={item.active ? 'checkmark-circle-outline' : 'ellipse-outline'} size={22} color={item.active ? 'rgb(255, 140, 57)' : '#AAA'} />
+                      </TouchableHighlight>
+                      <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
                     </View>
-                    <View style={styles.cartboxConFoot}>
-                      <Text allowFontScaling={false} style={styles.cartboxConPrice}>¥{item.product_business_price}</Text>
-                      <Text style={styles.cartboxConFootSumText}>×{item.product_number}</Text>
+                    <View style={styles.cartboxCon}>
+                      <View style={styles.cartboxConHead}>
+                        <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
+                        <Text allowFontScaling={false} style={styles.cartboxConDetail}></Text>
+                      </View>
+                      <View style={styles.cartboxConFoot}>
+                        <Text allowFontScaling={false} style={styles.cartboxConPrice}>¥{item.product_business_price}</Text>
+                        <Text style={styles.cartboxConFootSumText}>×{item.product_number}</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              )
-            })
-          }
+                )
+              })
+            }
+          </View>
         </ScrollView>
         <View style={styles.cartboxTool}>
           <TouchableHighlight
@@ -240,6 +242,9 @@ const styles = {
     alignItems: 'center',
     padding: 10,
     width: '100%'
+  },
+  cartboxContainer: {
+    marginBottom: 80
   },
   cartbox: {
     borderRadius: 10,
@@ -337,6 +342,7 @@ const styles = {
   },
   cartboxToolButton: {
     backgroundColor: '#ff3636',
+    backgroundColor: '#999999',
     paddingTop: 8,
     paddingLeft: 15,
     paddingBottom: 8,

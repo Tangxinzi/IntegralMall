@@ -24,7 +24,7 @@ class User extends React.Component {
       list: [],
       details: [],
       catalogs: {},
-      id: 274
+      id: 276
     };
     this.fetchDataList();
     this.fetchDataDetail(this.state.id);
@@ -165,9 +165,11 @@ const styles = {
     backgroundColor: 'linear-gradient(to right, rgb(223, 20, 15), rgb(241, 83, 56))'
   },
   listName: {
-    fontSize: 14,
-    paddingTop: 8,
-    paddingBottom: 8,
+    height: 30,
+    lineHeight: 30,
+    fontSize: 13,
+    // paddingTop: 7,
+    // paddingBottom: 7,
     color: '#000',
     textAlign: 'center'
   },

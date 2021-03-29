@@ -26,7 +26,7 @@ class User extends React.Component {
 
     this.state = {
       data: [],
-      user: [],
+      user: null,
       number: [
         {
           text: '金币'
@@ -49,22 +49,22 @@ class User extends React.Component {
           {
             text: '待付款',
             img: Icon.waitPayment,
-            uri: 'https://taupd.ferer.net/mobile/user/order/state?status=1&'
+            uri: 'https://taupd.ferer.net/mobile/user/order?status=1&sign='
           },
           {
             text: '待发货',
             img: Icon.sendGoods,
-            uri: 'https://taupd.ferer.net/mobile/user/order/state?status=2&'
+            uri: 'https://taupd.ferer.net/mobile/user/order?status2&sign='
           },
           {
             text: '待收货',
             img: Icon.deliveryGoods,
-            uri: 'https://taupd.ferer.net/mobile/user/order/state?status=3&'
+            uri: 'https://taupd.ferer.net/mobile/user/order?status=3&sign='
           },
           {
             text: '售后',
             img: Icon.service,
-            uri: 'https://taupd.ferer.net/mobile/user/order/state?status=4&'
+            uri: 'https://taupd.ferer.net/mobile/user/order?status=4&sign='
           }
         ],
         lottery: [
@@ -124,6 +124,7 @@ class User extends React.Component {
           type: 'web',
           text: '分享下载',
           color: '#FFF',
+          style: { top: -1 },
           backgroundColor: '#fe4b52',
           name: 'arrow-redo',
           uri: ''
@@ -132,7 +133,7 @@ class User extends React.Component {
           type: 'web',
           text: '常见问题',
           color: '#FFF',
-          style: { top: 1 },
+          style: { top: 0 },
           backgroundColor: '#2095c1',
           name: 'help-circle',
           size: 25,
@@ -142,19 +143,19 @@ class User extends React.Component {
           type: 'web',
           text: '隐私安全',
           color: '#FFF',
-          style: { top: 1 },
+          style: { top: 0 },
           backgroundColor: '#ff6b00',
           name: 'shield-checkmark',
           uri: ''
         },
         {
-          type: 'web',
+          type: 'navigate',
           text: '设置',
           color: '#FFF',
-          style: { top: 1 },
+          style: { top: 0 },
           backgroundColor: '#666666',
           name: 'settings-sharp',
-          uri: ''
+          uri: 'Setting'
         }
       ],
     };
@@ -180,51 +181,52 @@ class User extends React.Component {
   fetchLoginfo() {
     AsyncStorage.getItem('user')
     .then((response) => {
-      this.setState({
-        user: JSON.parse(response)
-      })
-      if (this.state.user.id) {
-        fetch(`https://taupd.ferer.net/v1/api/user/auth?sign=` + this.state.user.token, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          }
-        })
-        .then(response => response.json())
-        .then(responseData => {
-          if (responseData.user) {
-            AsyncStorage.setItem('user', JSON.stringify(responseData.user));
-            this.setState({
-              user: responseData.user,
-              rows: responseData.rows
-            })
-          }
-
-          if (responseData.name == 'TokenExpiredError') {
-            this.setState({
-              user: []
-            })
-            AsyncStorage.removeItem('user');
-          }
-        })
-        .catch((error) => {
-          console.log('err: ', error)
-        })
-        .done()
-      } else {
+      const parse = JSON.parse(response)
+      if (parse.id) {
         this.setState({
-          user: null
+          user: parse
         })
-        AsyncStorage.removeItem('user');
+        console.log(parse);
+
+        // fetch(`https://taupd.ferer.net/v1/api/user/auth?sign=` + parse.token, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Accept': 'application/json',
+        //     'Content-Type': 'application/json',
+        //   }
+        // })
+        // .then(response => response.json())
+        // .then(responseData => {
+        //   if (responseData.user) {
+        //     AsyncStorage.setItem('user', JSON.stringify(responseData.user));
+        //     this.setState({
+        //       user: responseData.user,
+        //       // rows: responseData.rows
+        //     })
+        //   } else {
+        //     // this.logout()
+        //   }
+        // })
+        // .catch((error) => {
+        //   this.logout()
+        //   console.log('err: ', error)
+        // })
+        // .done()
+      } else {
+        this.logout()
       }
     })
     .catch((error) => {
-      this.setState({
-        user: null
-      })
+      this.logout()
     })
     .done();
+  }
+
+  logout () {
+    this.setState({
+      user: null
+    })
+    AsyncStorage.removeItem('user');
   }
 
   render() {
@@ -258,7 +260,7 @@ class User extends React.Component {
                 this.props.navigation.navigate('Web', { title: '编辑个人信息', uri: `https://taupd.ferer.net/mobile/user/profile/${ this.state.user.id }/edit` })
               }}
             >
-              <Image resizeMode='cover' style={styles.userAvatar} source={{uri: this.state.user.avator}} />
+              <Image resizeMode='cover' style={styles.userAvatar} source={{uri: this.state.user.avator || 'https://taupd.ferer.net/uploads/sources/2021/03/28/VCbIisXyGT9lgg97Ohcq4tiWACr766fy.png'}} />
             </TouchableHighlight>
             <View style={styles.userInfo}>
               <Text style={styles.userInfotext}>{this.state.user.user_nickname}</Text>
@@ -368,7 +370,7 @@ class User extends React.Component {
                               this.props.navigation.navigate(item.uri)
                               break;
                             case 'web':
-                              this.props.navigation.navigate('Web', { title: item.text, uri: item.uri })
+                              this.props.navigation.navigate('Web', { title: item.text, uri: item.uri + '?sign=' + this.state.user.token })
                               break;
                           }
                         }}
@@ -399,7 +401,7 @@ class User extends React.Component {
                               this.props.navigation.navigate(item.uri)
                               break;
                             case 'web':
-                              this.props.navigation.navigate('Web', { title: item.text, uri: item.uri })
+                              this.props.navigation.navigate('Web', { title: item.text, uri: item.uri + '?sign=' + this.state.user.token })
                               break;
                           }
                         }}
@@ -430,7 +432,7 @@ class User extends React.Component {
                               this.props.navigation.navigate(item.uri)
                               break;
                             case 'web':
-                              this.props.navigation.navigate('Web', { title: item.text, uri: item.uri })
+                              this.props.navigation.navigate('Web', { title: item.text, uri: item.uri + '?sign=' + this.state.user.token })
                               break;
                           }
                         }}
@@ -474,7 +476,8 @@ const styles = {
   userContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    margin: 10
+    margin: 10,
+    marginTop: 0
   },
   userAvatarTouch: {
 
@@ -483,13 +486,16 @@ const styles = {
     marginRight: 10,
     height: 60,
     width: 60,
-    borderRadius: 60,
+    borderRadius: 60
   },
   userInfo: {
-
+    height: 50,
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   userInfotext: {
-    marginBottom: 10,
+    // marginTop: 8,
+    // marginBottom: 8,
     fontSize: 20,
     fontWeight: '600'
   },

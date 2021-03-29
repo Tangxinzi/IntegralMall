@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ViewSwiper from 'react-native-swiper';
+import Axios from 'react-native-axios';
 import {
   Text,
   View,
@@ -39,9 +39,10 @@ class Login extends React.Component {
     ),
     headerRight: (
       <TouchableHighlight
+        underlayColor='transparent'
         style={{paddingLeft: 10, paddingRight: 10}}
         onPress={() => {
-          this.props.navigation.navigate('Web', { title: '注册', uri: 'https://taupd.ferer.net/mobile/user/register' })
+          navigation.navigate('Web', { title: '注册', uri: 'https://taupd.ferer.net/mobile/user/register' })
         }}
       >
         <Text allowFontScaling={false}>注册</Text>
@@ -57,9 +58,11 @@ class Login extends React.Component {
     super(props);
 
     this.state = {
-      phone: "17725386753",
-      password: "55555jkl"
+      phone: "",
+      password: ""
     };
+
+    AsyncStorage.removeItem('user');
   }
 
   componentWillUnmount() {
@@ -80,10 +83,11 @@ class Login extends React.Component {
     })
     .then(response => response.json())
     .then(responseData => {
+      console.log(responseData);
       if (responseData.id) {
         AsyncStorage.setItem('user', JSON.stringify(responseData));
         this.props.navigation.goBack();
-        this.props.navigation.state.params.refresh();
+        // this.props.navigation.state.params.refresh();
       }
     })
     .catch((error) => {
@@ -126,7 +130,7 @@ class Login extends React.Component {
                 placeholder="请输入密码"
                 clearButtonMode="while-editing"
                 password={true}
-                defaultValue=""
+                defaultValue={this.state.password}
                 placeholderTextColor="#CCC"
                 secureTextEntry
                 onChangeText={(params) => {
@@ -176,14 +180,15 @@ const styles = {
     width: '100%',
     borderColor: 'gray',
     color: '#111',
-    borderWidth: 1,
-    padding: 12,
-    height: 43,
+    borderBottomWidth: 2,
+    padding: 10,
+    // height: 43,
     marginTop: 10,
+    paddingLeft: 0,
     fontWeight: '700',
-    borderRadius: 12,
+    borderRadius: 0,
     color: '#111',
-    textAlign: 'center'
+    textAlign: 'left'
   },
   textSubmitFoot: {
     height: 200,

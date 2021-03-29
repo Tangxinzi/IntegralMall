@@ -170,9 +170,12 @@ class Home extends React.Component {
                     <Text allowFontScaling={false} style={styles.lotteryLottery_name} numberOfLines={2}>{item.product_name}</Text>
                     <Text allowFontScaling={false} style={styles.lotteryLottery_description} numberOfLines={1}>{item.product_business_description}</Text>
                     <View style={styles.lotteryFooter}>
-                      <Text allowFontScaling={false} style={styles.lotteryFinish_quantity}>{'¥' + (item.product_business_discount ? item.product_business_discount : item.product_business_price)}</Text>
+                      <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+                        <Text allowFontScaling={false} style={styles.lotteryFinish_quantity}>{'¥' + (item.product_business_discount ? item.product_business_discount : item.product_business_price)}</Text>
+                        <Text allowFontScaling={false} style={styles.lotteryFinish_price}>{item.product_business_discount ? '¥' + item.product_business_price : ''}</Text>
+                      </View>
                       <View style={styles.lotteryBuy}>
-                        <Text allowFontScaling={false} style={styles.lotteryBuyText}>加入</Text>
+                        <Text allowFontScaling={false} style={styles.lotteryBuyText}>＋</Text>
                       </View>
                     </View>
                   </View>
@@ -271,17 +274,27 @@ const styles = {
     color: '#ff1b4b',
     fontWeight: '600'
   },
+  lotteryFinish_price: {
+    marginLeft: 8,
+    marginBottom: 1,
+    fontSize: 14,
+    color: '#a3a3a3',
+    fontWeight: '400',
+    textDecorationLine: 'line-through'
+  },
   lotteryBuy: {
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
+    // padding: 6,
     color: '#ff1b4b',
     borderRadius: 16,
     backgroundColor: '#ffe6eb',
   },
   lotteryBuyText: {
-    fontSize: 12,
+    width: 25,
+    height: 25,
+    lineHeight: 25,
+    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: '600',
     color: '#ff1b4b'
   },
   listContainer: {

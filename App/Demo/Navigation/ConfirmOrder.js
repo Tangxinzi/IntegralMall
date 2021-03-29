@@ -91,7 +91,7 @@ class ConfirmOrder extends React.PureComponent {
   }
 
   submitOrder () {
-    fetch(`http://0.0.0.0:8085/v1/api/carts/submit`, {
+    fetch(`https://taupd.ferer.net/v1/api/carts/submit`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -104,8 +104,8 @@ class ConfirmOrder extends React.PureComponent {
     })
     .then(response => response.json())
     .then(responseData => {
-      console.log(`http://0.0.0.0:8085/mobile/user/order/pay?id=${ responseData[0] }&sign=${ this.state.user.token }`)
-      this.props.navigation.navigate('Web', { title: '支付订单', uri: `http://0.0.0.0:8085/mobile/user/order/pay?id=${ responseData[0] }&sign=${ this.state.user.token }` })
+      console.log(`https://taupd.ferer.net/mobile/user/order/pay?id=${ responseData[0] }&sign=${ this.state.user.token }`)
+      this.props.navigation.navigate('Web', { title: '支付订单', uri: `https://taupd.ferer.net/mobile/user/order/pay?id=${ responseData[0] }&sign=${ this.state.user.token }` })
     })
     .catch((error) => {
       console.log('err: ', error)
@@ -167,7 +167,7 @@ class ConfirmOrder extends React.PureComponent {
     } else {
       return (
         <>
-          <ScrollView>
+          <ScrollView style={styles.scrollView}>
             {
               this.state.confirm.user.user_address.map((item, key) => {
                 if (this.state.check == null && item.check == 'on') {
@@ -292,6 +292,9 @@ class ConfirmOrder extends React.PureComponent {
 }
 
 const styles = {
+  scrollView: {
+    marginBottom: 100
+  },
   container: {
     position: 'relative',
     flex: 1,

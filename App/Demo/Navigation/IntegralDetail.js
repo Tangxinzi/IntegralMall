@@ -10,7 +10,7 @@ import WebView from 'react-native-webview'
 class IntegralDetail extends React.Component {
   static navigationOptions = ({navigation, screenProps}) => ({
     headerTitle: (
-      <Text allowFontScaling={false} style={{
+      <Text allowFontScaling={false} numberOfLines={1} style={{
         fontSize: 17,
         fontWeight: '600',
         color: 'rgba(0, 0, 0, .9)',
@@ -34,6 +34,9 @@ class IntegralDetail extends React.Component {
       }
       </>
     ),
+    headerStyle: {
+      elevation: 0,
+    },
   });
 
   constructor(props) {

@@ -2,6 +2,7 @@ import React, { Component, useRef } from 'react';
 import iconStyle from '../../Styles/Icon'
 import ViewSwiper from 'react-native-swiper';
 import HTMLView from 'react-native-htmlview';
+import RenderHTML from "react-native-render-html";
 import { Modalize } from 'react-native-modalize';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -21,7 +22,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
-  TouchableHighlight,
+  TouchableHighlight
 } from 'react-native';
 
 function renderNode(node, index) {
@@ -44,7 +45,7 @@ function isIphoneX() {
   return Platform.OS === 'ios' && ((screenH === X_HEIGHT && screenW === X_WIDTH) || (screenH === X_WIDTH && screenW === X_HEIGHT))
 }
 
-class LotteryDetails extends React.PureComponent {
+class LotteryDetails extends React.Component {
   static navigationOptions ({ navigation, screenProps }) {
     const { params } = navigation.state;
 
@@ -57,7 +58,11 @@ class LotteryDetails extends React.PureComponent {
           textAlign: 'center',
           marginHorizontal: 16
         }}>{ params.title }</Text>
-      )
+      ),
+      tabBarVisible: false,
+      headerStyle: {
+        elevation: 0,
+      },
     }
   };
 
@@ -169,6 +174,18 @@ class LotteryDetails extends React.PureComponent {
     );
   }
 
+  renderHTMLView = () => {
+    if (this.state.details.product_detail) {
+      return (
+        <ScrollView style={{ flex: 1, paddingBottom: 50 }}>
+          <RenderHTML source={{ html: this.state.details.product_detail }} imagesMaxWidth={ Dimensions.get('window').width } />
+        </ScrollView>
+      );
+    } else {
+      return (<></>);
+    }
+  }
+
   render() {
     if (this.state.details) {
       return (
@@ -211,7 +228,7 @@ class LotteryDetails extends React.PureComponent {
                 {
                   this.state.details.product_business_quantity ? (
                     <Text allowFontScaling={false} style={styles.productHeaderQuantity} numberOfLines={1}>限购{this.state.details.product_business_quantity}份</Text>
-                  ) : ''
+                  ) : (<></>)
                 }
               </View>
               <View style={styles.productHeader}>
@@ -225,7 +242,7 @@ class LotteryDetails extends React.PureComponent {
                 </View>
               </View>
               {
-                this.state.details.pages && this.state.details.pages.map((item, key) => {
+                this.state.details.pages.length && this.state.details.pages.map((item, key) => {
                   return (
                     <TouchableHighlight
                       style={[styles.list, {marginTop: 1}]}
@@ -253,44 +270,22 @@ class LotteryDetails extends React.PureComponent {
                 <Text allowFontScaling={false} style={styles.decorationLineText} numberOfLines={1}>  ———</Text>
               </View>
               <TouchableHighlight
-                style={[styles.productHeader, {paddingRight: 15}]}
+                style={[styles.productHeader, {marginTop: 10, paddingRight: 15}]}
                 underlayColor="rgba(255, 255, 255, 0.85)"
                 activeOpacity={0.85}
                 onPress={this.openModal}
               >
                 <>
-                  <Text allowFontScaling={false} style={[styles.text, {fontWeight: '800'}]} numberOfLines={2}>产品参数</Text>
+                  <Text allowFontScaling={false} style={styles.text} numberOfLines={2}>产品参数</Text>
                   <View style={styles.textArrow}>
-                    <Text allowFontScaling={false} style={styles.textDesc} numberOfLines={1}>更多</Text>
+                    <Text allowFontScaling={false} style={styles.textDesc} numberOfLines={1}></Text>
                     <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
                   </View>
                 </>
               </TouchableHighlight>
-              {
-                this.state.details.product_field.parameters && this.state.details.product_field.parameters.map((item, key) => {
-                  if (key < 4) {
-                    return (
-                      <TouchableHighlight
-                        style={[styles.list, {marginTop: 0.5}]}
-                        underlayColor="rgba(255, 255, 255, 1)"
-                        activeOpacity={1}
-                      >
-                        <View style={styles.listRows}>
-                          <Text allowFontScaling={false} numberOfLines={1} style={styles.text}>{item.parameter_name}</Text>
-                          <Text allowFontScaling={false} numberOfLines={1} style={[styles.textArrow, styles.textDesc]}>{item.parameter_value}</Text>
-                        </View>
-                      </TouchableHighlight>
-                    )
-                  }
-                })
-              }
-              {
-                this.state.details.product_detail ? (
-                  <Text allowFontScaling={false}>
-                    <HTMLView value={this.state.details.product_detail} renderNode={renderNode} />
-                  </Text>
-                ) : ''
-              }
+              <View>
+                {this.renderHTMLView()}
+              </View>
             </View>
           </ScrollView>
           <View style={bottomStyle.bottomButtons}>
@@ -327,7 +322,7 @@ class LotteryDetails extends React.PureComponent {
               </TouchableHighlight>
             </View>
           </View>
-          <Modalize ref={this.modal} adjustToContentHeight>
+          <Modalize ref={this.modal} adjustToContentHeight handlePosition="inside">
             {this.renderContent()}
           </Modalize>
         </>
@@ -412,6 +407,7 @@ const styles = {
     fontWeight: '600'
   },
   decorationLine: {
+    display: 'none',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -457,16 +453,14 @@ const styles = {
 const bottomStyle = {
   bottomButtons: {
     zIndex: 1,
-    paddingBottom: isIphoneX() ? 34 : 0,
     position: 'absolute',
     backgroundColor: '#FFF',
     borderTopWidth: 0.5,
     borderTopColor: 'rgba(143, 143, 143, 0.33)',
     bottom: 0,
     left: 0,
-    paddingTop: 15,
-    paddingLeft: 15,
-    paddingRight: 15,
+    padding: 15,
+    paddingBottom: isIphoneX() ? 35 : 15,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',

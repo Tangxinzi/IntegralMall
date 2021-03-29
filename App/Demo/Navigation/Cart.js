@@ -26,9 +26,7 @@ class Cart extends React.Component {
   }
 
   componentDidMount() {
-    // console.log('params')
     const { params } = this.props.navigation.state;
-    console.log(params);
     this._navListener = this.props.navigation.addListener('didFocus', () => {
       this.fetch()
     });
@@ -45,7 +43,7 @@ class Cart extends React.Component {
         user: JSON.parse(response)
       })
       if (this.state.user.id) {
-        fetch(`http://0.0.0.0:8085/v1/api/carts?sign=` + this.state.user.token, {
+        fetch(`https://taupd.ferer.net/v1/api/carts?sign=` + this.state.user.token, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -152,51 +150,53 @@ class Cart extends React.Component {
   render() {
     return (
       <>
-        <ScrollView>
-          {
-            this.state.carts.map((item, key) => {
-              return (
-                <View style={styles.cartbox}>
-                  <View style={styles.cartboxImageCon}>
-                    <TouchableHighlight
-                      activeOpacity={0.85}
-                      underlayColor="none"
-                      onPress={() => { this.setProductActive(key, item.cart_id) }}
-                    >
-                      <Ionicons name={item.active ? 'checkmark-circle-outline' : 'ellipse-outline'} size={22} color={item.active ? 'rgb(255, 140, 57)' : '#AAA'} />
-                    </TouchableHighlight>
-                    <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
-                  </View>
-                  <View style={styles.cartboxCon}>
-                    <View style={styles.cartboxConHead}>
-                      <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
-                      <Text allowFontScaling={false} style={styles.cartboxConDetail}></Text>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.cartboxContainer}>
+            {
+              this.state.carts.map((item, key) => {
+                return (
+                  <View style={styles.cartbox}>
+                    <View style={styles.cartboxImageCon}>
+                      <TouchableHighlight
+                        activeOpacity={0.85}
+                        underlayColor="none"
+                        onPress={() => { this.setProductActive(key, item.cart_id) }}
+                      >
+                        <Ionicons name={item.active ? 'checkmark-circle-outline' : 'ellipse-outline'} size={22} color={item.active ? 'rgb(255, 140, 57)' : '#AAA'} />
+                      </TouchableHighlight>
+                      <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
                     </View>
-                    <View style={styles.cartboxConFoot}>
-                      <Text allowFontScaling={false} style={styles.cartboxConPrice}>¥{item.product_business_price}</Text>
-                      <View style={styles.cartboxConFootSum}>
-                        <TouchableHighlight
-                          activeOpacity={0.85}
-                          underlayColor="none"
-                          onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'remove') }}
-                        >
-                          <Ionicons name={'remove-outline'} size={18} style={styles.cartboxConFootSumIcon} />
-                        </TouchableHighlight>
-                        <Text style={styles.cartboxConFootSumText}>{item.product_number}</Text>
-                        <TouchableHighlight
-                          activeOpacity={0.85}
-                          underlayColor="none"
-                          onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'add') }}
-                        >
-                          <Ionicons name={'add-outline'} size={18} style={styles.cartboxConFootSumIcon} />
-                        </TouchableHighlight>
+                    <View style={styles.cartboxCon}>
+                      <View style={styles.cartboxConHead}>
+                        <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
+                        <Text allowFontScaling={false} style={styles.cartboxConDetail}></Text>
+                      </View>
+                      <View style={styles.cartboxConFoot}>
+                        <Text allowFontScaling={false} style={styles.cartboxConPrice}>¥{item.product_business_price}</Text>
+                        <View style={styles.cartboxConFootSum}>
+                          <TouchableHighlight
+                            activeOpacity={0.85}
+                            underlayColor="none"
+                            onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'remove') }}
+                          >
+                            <Ionicons name={'remove-outline'} size={18} style={styles.cartboxConFootSumIcon} />
+                          </TouchableHighlight>
+                          <Text style={styles.cartboxConFootSumText}>{item.product_number}</Text>
+                          <TouchableHighlight
+                            activeOpacity={0.85}
+                            underlayColor="none"
+                            onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'add') }}
+                          >
+                            <Ionicons name={'add-outline'} size={18} style={styles.cartboxConFootSumIcon} />
+                          </TouchableHighlight>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              )
-            })
-          }
+                )
+              })
+            }
+          </View>
         </ScrollView>
         <View style={styles.cartboxTool}>
           <TouchableHighlight
@@ -235,6 +235,9 @@ const styles = {
     alignItems: 'center',
     padding: 10,
     width: '100%'
+  },
+  cartboxContainer: {
+    marginBottom: 80
   },
   cartbox: {
     borderRadius: 10,

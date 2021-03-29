@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.integralmall">
+  package="com.integralmall"
+  android:versionCode="2"
+  android:versionName="1.1.1">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

@@ -38,6 +38,17 @@ class Integral extends React.PureComponent {
       <TouchableHighlight
         style={{right: 10}}
         underlayColor='transparent'
+        onPress={() => {
+          AsyncStorage.getItem('user')
+          .then((response) => {
+            const parse = JSON.parse(response)
+            navigation.navigate('Web', { title: '积分记录', uri: `https://taupd.ferer.net/mobile/user/lottery/lists?sign=` + parse.token })            
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+          .done();
+        }}
       >
         <Ionicons
           name={'time-outline'}
@@ -48,7 +59,8 @@ class Integral extends React.PureComponent {
     tabBarVisible: false,
     headerTitleStyle: {color: '#000000'},
     headerStyle: {
-      borderBottomWidth: 0
+      borderBottomWidth: 0,
+      elevation: 0,
     },
   });
 
@@ -131,6 +143,14 @@ class Integral extends React.PureComponent {
         <Text style={s.content__description}>{faker.lorem.paragraph()}</Text>
         <Text style={s.content__description}>{faker.lorem.paragraph()}</Text>
         <Text style={s.content__description}>{faker.lorem.paragraph()}</Text>
+
+        <TouchableOpacity
+          style={s.content__button}
+          activeOpacity={0.9}
+          onPress={this.closeModal}
+        >
+          <Text style={s.content__buttonText}>完成</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -162,13 +182,14 @@ class Integral extends React.PureComponent {
               </View>
             </TouchableHighlight>
           </View>
-          <Modalize ref={this.modal} alwaysOpen="0" adjustToContentHeight scrollViewProps={{
+          <Modalize handlePosition="inside" withHandle={true} ref={this.modal} adjustToContentHeight scrollViewProps={{
               showsVerticalScrollIndicator: false,
-              stickyHeaderIndices: [0],
-            }}>
+              // stickyHeaderIndices: [0],
+            }} style={{backgroundColor: '#FFF'}}>
             {this.renderContent()}
           </Modalize>
           <ScrollView
+            withHandle={false}
             automaticallyAdjustContentInsets={true}
             refreshControl={
               <RefreshControl
@@ -237,6 +258,7 @@ const styles = {
     width: '100%'
   },
   flexBetween: {
+    marginLeft: 2,
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -382,7 +404,7 @@ const s = {
     fontSize: 20,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 20
+    marginBottom: 10
   },
 
   content__description: {

@@ -22,6 +22,8 @@ import Cart from './Cart'
 import CartManage from './CartManage'
 import User from './User'
 import Login from './Login'
+import Setting from './Setting'
+import Message from './Message'
 import Integral from './Integral'
 import IntegralDetail from './IntegralDetail'
 import ConfirmOrder from './ConfirmOrder'
@@ -60,7 +62,7 @@ class HomeScreen extends React.Component {
         <View>
           <TextInput
             inlineImageLeft='search_icon'
-            style={{ paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 20, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
+            style={{ marginLeft: 10, paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 20, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
             placeholder=''
           />
         </View>
@@ -70,7 +72,8 @@ class HomeScreen extends React.Component {
     headerTitleStyle: {color: '#000000'},
     headerStyle: {
       backgroundColor: '#ffd600',
-      borderBottomWidth: 0
+      borderBottomWidth: 0,
+      elevation: 0
     },
   });
 
@@ -83,17 +86,6 @@ class HomeScreen extends React.Component {
 
 class LifeScreen extends React.Component {
   static navigationOptions = ({navigation, screenProps}) => ({
-    headerLeft: (
-      <TouchableHighlight
-        style={{left: 10}}
-        underlayColor='transparent'
-      >
-        <MaterialIcons
-          name={'search'}
-          size={24}
-        />
-      </TouchableHighlight>
-    ),
     headerTitle: (
       <Text allowFontScaling={false} style={{
         fontSize: 17,
@@ -101,30 +93,20 @@ class LifeScreen extends React.Component {
         color: 'rgba(0, 0, 0, 1)',
         textAlign: 'center',
         marginHorizontal: 16
-      }}>发现</Text>
-    ),
-    headerRight: (
-      <TouchableHighlight
-        style={{right: 10}}
-        underlayColor='transparent'
-      >
-        <MaterialIcons
-          name={'edit'}
-          size={24}
-        />
-      </TouchableHighlight>
+      }}>消息</Text>
     ),
     tabBarVisible: false,
     headerTitleStyle: {color: '#000000'},
     headerStyle: {
       backgroundColor: '#ffd600',
-      borderBottomWidth: 0
+      borderBottomWidth: 0,
+      elevation: 0
     },
   });
 
   render() {
     return (
-      <Life />
+      <Message />
     );
   }
 }
@@ -163,7 +145,8 @@ class CartScreen extends React.Component {
       headerTitleStyle: {color: '#000000'},
       headerStyle: {
         backgroundColor: '#ffd600',
-        borderBottomWidth: 0
+        borderBottomWidth: 0,
+        elevation: 0
       },
     }
   };
@@ -206,22 +189,13 @@ class CartScreen extends React.Component {
 class UserScreen extends React.Component {
   static navigationOptions = ({navigation, screenProps}) => ({
     headerTitle: null,
-    headerRight: (
-      <TouchableHighlight
-        style={{right: 10}}
-        underlayColor='transparent'
-      >
-        <Ionicons
-          name={'md-notifications-outline'}
-          size={28}
-        />
-      </TouchableHighlight>
-    ),
+    headerRight: null,
     tabBarVisible: false,
     headerTitleStyle: {color: '#000000'},
     headerStyle: {
       backgroundColor: '#ffd600',
-      borderBottomWidth: 0
+      borderBottomWidth: 0,
+      elevation: 0
     },
   });
 
@@ -241,7 +215,7 @@ class ClassifyScreen extends React.Component {
         <View>
           <TextInput
             inlineImageLeft='search_icon'
-            style={{ paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 20, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
+            style={{ marginLeft: 10, paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 20, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
             placeholder=''
           />
         </View>
@@ -251,7 +225,8 @@ class ClassifyScreen extends React.Component {
     headerTitleStyle: {color: '#000000'},
     headerStyle: {
       backgroundColor: '#ffd600',
-      borderBottomWidth: 0
+      borderBottomWidth: 0,
+      elevation: 0
     },
   });
 
@@ -364,6 +339,8 @@ const stackNavigator = createStackNavigator({
   DetailsScreen: { screen: DetailsScreen },
   Web: { screen: Web },
   Login: { screen: Login },
+  Setting: { screen: Setting },
+  Message: { screen: Message },
   Integral: { screen: Integral },
   IntegralDetail: { screen: IntegralDetail },
   ConfirmOrder: { screen: ConfirmOrder },

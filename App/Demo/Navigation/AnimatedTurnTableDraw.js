@@ -24,7 +24,8 @@ export default class AnimatedTurnTableDraw extends React.Component {
     ),
     headerStyle: {
       backgroundColor: '#ffd600',
-      borderBottomWidth: 0
+      borderBottomWidth: 0,
+      elevation: 0,
     },
   });
 
