@@ -17,6 +17,7 @@ import {
 import Home from './Home'
 import Classify from './Classify'
 import Web from './Web'
+import Html from './Html'
 import Life from './Life'
 import Cart from './Cart'
 import CartManage from './CartManage'
@@ -209,17 +210,13 @@ class UserScreen extends React.Component {
 class ClassifyScreen extends React.Component {
   static navigationOptions = ({navigation, screenProps}) => ({
     headerTitle: (
-      <TouchableHighlight
-        underlayColor='transparent'
-      >
-        <View>
-          <TextInput
-            inlineImageLeft='search_icon'
-            style={{ marginLeft: 10, paddingLeft: 15, height: 33, width: Dimensions.get('window').width - 20, borderRadius: 15, backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 0 }}
-            placeholder=''
-          />
-        </View>
-      </TouchableHighlight>
+      <Text allowFontScaling={false} style={{
+        fontSize: 17,
+        fontWeight: '600',
+        color: 'rgba(0, 0, 0, 1)',
+        textAlign: 'center',
+        marginHorizontal: 16
+      }}>分类目录</Text>
     ),
     tabBarVisible: false,
     headerTitleStyle: {color: '#000000'},
@@ -261,13 +258,9 @@ const BottomNavigatorScreen = createBottomTabNavigator({
   Home: {
      screen: HomeStack,
      navigationOptions: {
-        tabBarLabel: '首页',
+        tabBarLabel: '好物',
         tabBarIcon: ({tintColor, focused}) => (
-          <Ionicons
-            name={focused ? 'md-home' : 'md-home'}
-            size={25}
-            style={{color: tintColor}}
-          />
+          <MaterialIcons name={'storefront'} size={25} color={tintColor} />
         ),
      },
   },
@@ -287,11 +280,11 @@ const BottomNavigatorScreen = createBottomTabNavigator({
   Life: {
      screen: LifeStack,
      navigationOptions: {
-        tabBarLabel: '发现',
+        tabBarLabel: '消息',
         tabBarIcon: ({tintColor, focused}) => (
           <Ionicons
-            name={focused ? 'earth' : 'earth'}
-            size={25}
+            name={focused ? 'notifications' : 'notifications'}
+            size={23}
             style={{color: tintColor}}
           />
         ),
@@ -324,9 +317,10 @@ const BottomNavigatorScreen = createBottomTabNavigator({
      },
   },
 }, {
-  mode: 'card',
-  headerMode: 'none',
-  initialRouteName: 'Home'
+  mode: 'modal',
+  headerMode: 'screen',
+  initialRouteName: 'Home',
+  headerTransitionPreset: 'fade-in-place'
 });
 
 const stackNavigator = createStackNavigator({
@@ -338,6 +332,7 @@ const stackNavigator = createStackNavigator({
   },
   DetailsScreen: { screen: DetailsScreen },
   Web: { screen: Web },
+  Html: { screen: Html },
   Login: { screen: Login },
   Setting: { screen: Setting },
   Message: { screen: Message },

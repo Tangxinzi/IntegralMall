@@ -2,10 +2,13 @@ import React, { Component, useRef } from 'react';
 import iconStyle from '../../Styles/Icon'
 import ViewSwiper from 'react-native-swiper';
 import HTMLView from 'react-native-htmlview';
-import RenderHTML from "react-native-render-html";
+import RenderHtml from "react-native-render-html";
 import { Modalize } from 'react-native-modalize';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Toast from 'react-native-tiny-toast'
+import { NavigationActions } from 'react-navigation'
+
 import faker from 'faker';
 import {
   Text,
@@ -16,24 +19,27 @@ import {
   SafeAreaView,
   Dimensions,
   FlatList,
+  PixelRatio,
   SectionList,
   Platform,
+  Navigator,
   AsyncStorage,
   RefreshControl,
   ActivityIndicator,
   TouchableOpacity,
-  TouchableHighlight
+  TouchableHighlight,
+  useWindowDimensions
 } from 'react-native';
 
-function renderNode(node, index) {
-  if (node.name == 'iframe') {
-    return (
-      <View key={index}>
-        <Text>{node.attribs.src}</Text>
-      </View>
-    );
-  }
-}
+// function renderNode(node, index) {
+//   if (node.name == 'iframe') {
+//     return (
+//       <View key={index}>
+//         <Text>{node.attribs.src}</Text>
+//       </View>
+//     );
+//   }
+// }
 
 function isIphoneX() {
   let screenW = Dimensions.get('window').width;
@@ -71,8 +77,10 @@ class LotteryDetails extends React.Component {
 
     this.state = {
       id: this.props.navigation.state.params.id,
+      collection: null,
       details: null,
-      user: []
+      user: [],
+      image: {}
     }
 
     AsyncStorage.getItem('user')
@@ -80,6 +88,19 @@ class LotteryDetails extends React.Component {
       this.setState({
         user: JSON.parse(response)
       })
+
+      fetch(`https://taupd.ferer.net/v1/api/collections/${ this.state.id }?sign=${ this.state.user.token }`)
+        .then(response => response.json())
+        .then(responseData => {
+          console.log(responseData);
+          this.setState({
+            collection: responseData[0]['count']
+          });
+        })
+        .catch((error) => {
+          console.log('err: ', error)
+        })
+        .done();
     })
     .catch((error) => {
       console.log(error);
@@ -121,12 +142,18 @@ class LotteryDetails extends React.Component {
     .then(response => response.json())
     .then(responseData => {
       console.log(responseData);
+      Toast.showSuccess('商品添加成功')
     })
     .catch((error) => {
       console.log('err: ', error)
     })
     .done()
   }
+
+  orderAccount (id) {
+    this.props.navigation.navigate('ConfirmOrder', { now: 1, product_id: id })
+  }
+
 
   modal = React.createRef();
 
@@ -177,8 +204,17 @@ class LotteryDetails extends React.Component {
   renderHTMLView = () => {
     if (this.state.details.product_detail) {
       return (
-        <ScrollView style={{ flex: 1, paddingBottom: 50 }}>
-          <RenderHTML source={{ html: this.state.details.product_detail }} imagesMaxWidth={ Dimensions.get('window').width } />
+        <ScrollView>
+          <RenderHtml
+            html={ this.state.details.product_detail }
+            // renderers={renderers}
+            // computeEmbeddedMaxWidth={(availableWidth) => {
+            //   return Math.max(availableWidth, 50)
+            // }}
+            ptSize='5pt'
+            contentWidth={Dimensions.get('window').width}
+            imagesMaxWidth={Dimensions.get('window').width}
+          />
         </ScrollView>
       );
     } else {
@@ -288,37 +324,53 @@ class LotteryDetails extends React.Component {
               </View>
             </View>
           </ScrollView>
-          <View style={bottomStyle.bottomButtons}>
-            <View style={bottomStyle.button}>
-              <View style={{height: 30, width: 30, alignItems: 'center', justifyContent: 'center'}}>
-                <MaterialIcons name={'storefront'} size={26} color='#444' />
-              </View>
-              <Text allowFontScaling={false} style={{fontSize: 12, color: '#666'}}>首页</Text>
+          <View style={[bottomStyle.bottomButtons, {display: !this.state.user ? 'none' : null}]}>
+            <View style={[bottomStyle.button, {flex: 1, justifyContent: 'space-around' }]}>
+              <MaterialIcons name={'storefront'} size={27} underlayColor="rgba(255, 255, 255, 0.85)" activeOpacity={0.85} onPress={() => {
+                this.props.navigation.navigate('Home')
+              }} />
+              <Ionicons name={'cart-outline'} size={27} underlayColor="rgba(255, 255, 255, 0.85)" activeOpacity={0.85} onPress={() => {
+                this.props.navigation.navigate('Cart')
+              }} />
+              <MaterialIcons name={this.state.collection ? 'star' : 'star-border'} color={this.state.collection ? '#ffb000' : '#000'} size={27} onPress={() => {
+                console.log(`https://taupd.ferer.net/v1/api/collections/${ this.state.id }?type=products&state=${ this.state.collection ? 0 : 1 }&sign=${ this.state.user.token }`);
+                fetch(`https://taupd.ferer.net/v1/api/collections/${ this.state.id }?type=products&state=${ this.state.collection ? 0 : 1 }&sign=${ this.state.user.token }`)
+                  .then(response => response.json())
+                  .then(responseData => {
+                    console.log(responseData);
+                    this.setState({
+                      collection: responseData
+                    })
+                    if (responseData) {
+                      Toast.show('商品收藏成功')
+                    } else {
+                      Toast.show('商品取消收藏')
+                    }
+                  })
+                  .catch((error) => {
+                    console.log('err: ', error)
+                  })
+                  .done();
+              }} />
             </View>
             <View style={bottomStyle.button}>
-              <View style={{height: 30, width: 30, alignItems: 'center', justifyContent: 'center'}}>
-                <Ionicons name={'cart-outline'} size={27} color='#444' />
-              </View>
-              <Text allowFontScaling={false} style={{fontSize: 12, color: '#666'}}>购物车</Text>
-            </View>
-            <View style={bottomStyle.button}>
-              <View style={{height: 30, width: 30, alignItems: 'center', justifyContent: 'center'}}>
-                <MaterialIcons name={'star-border'} size={27} color='#444' />
-              </View>
-              <Text allowFontScaling={false} style={{fontSize: 12, color: '#666'}}>收藏</Text>
-            </View>
-            <View style={[bottomStyle.button, {flexDirection: 'row'}]}>
-              <View style={{width: 105, padding: 13, borderTopLeftRadius: 20, borderBottomLeftRadius: 20, backgroundColor: '#f97433'}}>
-                <Text allowFontScaling={false} style={{textAlign: 'center', fontWeight: '500', color: '#FFF'}}>加入购物车</Text>
-              </View>
               <TouchableHighlight
-                style={{width: 105, padding: 13, borderTopRightRadius: 20, borderBottomRightRadius: 20, backgroundColor: '#f93333'}}
+                style={{width: 110, padding: 13, backgroundColor: '#f97433'}}
                 underlayColor="none"
                 onPress={() => {
                   this.carts(this.state.id, 1)
                 }}
               >
-                <Text allowFontScaling={false} style={{textAlign: 'center', fontWeight: '500', color: '#FFF'}}>立即购买</Text>
+                <Text allowFontScaling={false} style={{textAlign: 'center', color: '#FFF'}}>加入购物车</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={{width: 110, padding: 13, backgroundColor: '#f93333'}}
+                underlayColor="none"
+                onPress={() => {
+                  this.orderAccount(this.state.id)
+                }}
+              >
+                <Text allowFontScaling={false} style={{textAlign: 'center', color: '#FFF'}}>立即购买</Text>
               </TouchableHighlight>
             </View>
           </View>
@@ -338,6 +390,24 @@ class LotteryDetails extends React.Component {
         </View>
       );
     }
+  }
+}
+
+const renderers = {
+  img: (htmlAttribs, children, convertedCSSStyles, passProps) => {
+    var image = {
+      width: PixelRatio.getPixelSizeForLayoutSize(htmlAttribs.width),
+      height: PixelRatio.getPixelSizeForLayoutSize(htmlAttribs.height),
+    }
+    console.log(htmlAttribs.width, htmlAttribs.height);
+    console.log(image)
+    console.log(1/PixelRatio.get())
+
+    var height = Dimensions.get('window').width * htmlAttribs.height / htmlAttribs.width
+    return (
+      <Image style={{ width: Dimensions.get('window').width, height }} source={{uri: htmlAttribs.src}} />
+      // <Image style={{ width: htmlAttribs.width, height: htmlAttribs.height }} source={{uri: htmlAttribs.src}} />
+    )
   }
 }
 
@@ -459,15 +529,17 @@ const bottomStyle = {
     borderTopColor: 'rgba(143, 143, 143, 0.33)',
     bottom: 0,
     left: 0,
-    padding: 15,
-    paddingBottom: isIphoneX() ? 35 : 15,
+    padding: 0,
+    paddingBottom: isIphoneX() ? 20 : 0,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   button: {
-    alignItems: 'center'
+    flexDirection: 'row',
+    alignItems: 'center',
+    // backgroundColor: '#CCC'
   }
 }
 

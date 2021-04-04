@@ -8,6 +8,7 @@ import {
   StatusBar,
   ScrollView,
   TextInput,
+  Dimensions,
   AsyncStorage,
   TouchableHighlight,
 } from 'react-native';
@@ -148,82 +149,91 @@ class Cart extends React.Component {
   }
 
   render() {
-    return (
-      <>
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.cartboxContainer}>
-            {
-              this.state.carts.map((item, key) => {
-                return (
-                  <View style={styles.cartbox}>
-                    <View style={styles.cartboxImageCon}>
-                      <TouchableHighlight
-                        activeOpacity={0.85}
-                        underlayColor="none"
-                        onPress={() => { this.setProductActive(key, item.cart_id) }}
-                      >
-                        <Ionicons name={item.active ? 'checkmark-circle-outline' : 'ellipse-outline'} size={22} color={item.active ? 'rgb(255, 140, 57)' : '#AAA'} />
-                      </TouchableHighlight>
-                      <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
-                    </View>
-                    <View style={styles.cartboxCon}>
-                      <View style={styles.cartboxConHead}>
-                        <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
-                        <Text allowFontScaling={false} style={styles.cartboxConDetail}></Text>
+    if (this.state.carts.length == 0) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 100 }} onPress={() => this.fetch()}>
+          <Image style={{ width: 200, height: 200, marginBottom: 10 }} source={{uri: 'https://taupd.ferer.net/uploads/sources/2021/03/29/td9esBbKyULo2QEXEeRScykh3mhSfDid.png'}} />
+          <Text allowFontScaling={false}>暂无内容</Text>
+        </View>
+      );
+    } else {
+      return (
+        <>
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.cartboxContainer}>
+              {
+                this.state.carts.map((item, key) => {
+                  return (
+                    <View style={styles.cartbox}>
+                      <View style={styles.cartboxImageCon}>
+                        <TouchableHighlight
+                          activeOpacity={0.85}
+                          underlayColor="none"
+                          onPress={() => { this.setProductActive(key, item.cart_id) }}
+                        >
+                          <Ionicons name={item.active ? 'checkmark-circle-outline' : 'ellipse-outline'} size={22} color={item.active ? 'rgb(255, 140, 57)' : '#AAA'} />
+                        </TouchableHighlight>
+                        <Image resizeMode='cover' style={styles.cartboxImage} source={{uri: item.product_image}} />
                       </View>
-                      <View style={styles.cartboxConFoot}>
-                        <Text allowFontScaling={false} style={styles.cartboxConPrice}>¥{item.product_business_price}</Text>
-                        <View style={styles.cartboxConFootSum}>
-                          <TouchableHighlight
-                            activeOpacity={0.85}
-                            underlayColor="none"
-                            onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'remove') }}
-                          >
-                            <Ionicons name={'remove-outline'} size={18} style={styles.cartboxConFootSumIcon} />
-                          </TouchableHighlight>
-                          <Text style={styles.cartboxConFootSumText}>{item.product_number}</Text>
-                          <TouchableHighlight
-                            activeOpacity={0.85}
-                            underlayColor="none"
-                            onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'add') }}
-                          >
-                            <Ionicons name={'add-outline'} size={18} style={styles.cartboxConFootSumIcon} />
-                          </TouchableHighlight>
+                      <View style={styles.cartboxCon}>
+                        <View style={styles.cartboxConHead}>
+                          <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
+                          <Text allowFontScaling={false} style={styles.cartboxConDetail}></Text>
+                        </View>
+                        <View style={styles.cartboxConFoot}>
+                          <Text allowFontScaling={false} style={styles.cartboxConPrice}>¥{item.product_business_price}</Text>
+                          <View style={styles.cartboxConFootSum}>
+                            <TouchableHighlight
+                              activeOpacity={0.85}
+                              underlayColor="none"
+                              onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'remove') }}
+                            >
+                              <Ionicons name={'remove-outline'} size={18} style={styles.cartboxConFootSumIcon} />
+                            </TouchableHighlight>
+                            <Text style={styles.cartboxConFootSumText}>{item.product_number}</Text>
+                            <TouchableHighlight
+                              activeOpacity={0.85}
+                              underlayColor="none"
+                              onPress={() => { this.setProductNumber(item.cart_id, item.product_number, 'add') }}
+                            >
+                              <Ionicons name={'add-outline'} size={18} style={styles.cartboxConFootSumIcon} />
+                            </TouchableHighlight>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
-                )
-              })
-            }
-          </View>
-        </ScrollView>
-        <View style={styles.cartboxTool}>
-          <TouchableHighlight
-            activeOpacity={0.85}
-            underlayColor="none"
-            style={styles.cartboxToolRow}
-            onPress={() => { this.setProductAllActive(this.state.active) }}
-          >
-            <>
-              <Ionicons name={this.state.active ? 'checkmark-circle' : 'ellipse-outline'} size={22} color={this.state.active ? 'rgb(255, 140, 57)' : '#AAA'} />
-              <Text allowFontScaling={false} style={styles.cartboxToolAll} numberOfLines={1}>{this.state.active ? '取消全选' : '全选'}</Text>
-            </>
-          </TouchableHighlight>
-          <View style={styles.cartboxToolRow}>
-            <Text allowFontScaling={false} style={styles.cartboxToolAll} numberOfLines={1}></Text>
+                  )
+                })
+              }
+            </View>
+          </ScrollView>
+          <View style={styles.cartboxTool}>
             <TouchableHighlight
               activeOpacity={0.85}
               underlayColor="none"
-              style={styles.cartboxToolButton}
-              onPress={() => { this.orderAccount() }}
+              style={styles.cartboxToolRow}
+              onPress={() => { this.setProductAllActive(this.state.active) }}
             >
-              <Text allowFontScaling={false} style={{fontSize: 14, fontWeight: '500', color: '#FFF'}}>结算</Text>
+              <>
+                <Ionicons name={this.state.active ? 'checkmark-circle' : 'ellipse-outline'} size={22} color={this.state.active ? 'rgb(255, 140, 57)' : '#AAA'} />
+                <Text allowFontScaling={false} style={styles.cartboxToolAll} numberOfLines={1}>{this.state.active ? '取消全选' : '全选'}</Text>
+              </>
             </TouchableHighlight>
+            <View style={styles.cartboxToolRow}>
+              <Text allowFontScaling={false} style={styles.cartboxToolAll} numberOfLines={1}></Text>
+              <TouchableHighlight
+                activeOpacity={0.85}
+                underlayColor="none"
+                style={styles.cartboxToolButton}
+                onPress={() => { this.orderAccount() }}
+              >
+                <Text allowFontScaling={false} style={{fontSize: 14, fontWeight: '500', color: '#FFF'}}>结算</Text>
+              </TouchableHighlight>
+            </View>
           </View>
-        </View>
-      </>
-    );
+        </>
+      );
+    }
   }
 }
 

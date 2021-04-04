@@ -78,10 +78,82 @@ class Setting extends React.Component {
           style={[styles.list, {marginTop: 1}]}
           underlayColor="rgba(255, 255, 255, 0.85)"
           activeOpacity={0.85}
+        >
+          <View style={styles.listRows}>
+            <Text allowFontScaling={false} style={styles.text}>修改资料</Text>
+            <View style={styles.textArrow}>
+              <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
+            </View>
+          </View>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[styles.list, {marginTop: 1}]}
+          underlayColor="rgba(255, 255, 255, 0.85)"
+          activeOpacity={0.85}
+        >
+          <View style={styles.listRows}>
+            <Text allowFontScaling={false} style={styles.text}>修改密码</Text>
+            <View style={styles.textArrow}>
+              <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
+            </View>
+          </View>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[styles.list, {marginTop: 1}]}
+          underlayColor="rgba(255, 255, 255, 0.85)"
+          activeOpacity={0.85}
+        >
+          <View style={styles.listRows}>
+            <Text allowFontScaling={false} style={styles.text}>更换手机号</Text>
+            <View style={styles.textArrow}>
+              <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
+            </View>
+          </View>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[styles.list, {marginTop: 1, marginBottom: 10}]}
+          underlayColor="rgba(255, 255, 255, 0.85)"
+          activeOpacity={0.85}
+        >
+          <View style={styles.listRows}>
+            <Text allowFontScaling={false} style={styles.text}>彻底注销账号</Text>
+            <View style={styles.textArrow}>
+              <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
+            </View>
+          </View>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[styles.list, {marginTop: 1}]}
+          underlayColor="rgba(255, 255, 255, 0.85)"
+          activeOpacity={0.85}
+        >
+          <View style={styles.listRows}>
+            <Text allowFontScaling={false} style={styles.text}>分享下载</Text>
+            <View style={styles.textArrow}>
+              <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
+            </View>
+          </View>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[styles.list, {marginTop: 1, marginBottom: 10}]}
+          underlayColor="rgba(255, 255, 255, 0.85)"
+          activeOpacity={0.85}
+        >
+          <View style={styles.listRows}>
+            <Text allowFontScaling={false} style={styles.text}>关于商城</Text>
+            <View style={styles.textArrow}>
+              <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
+            </View>
+          </View>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[styles.list, {marginTop: 1}]}
+          underlayColor="rgba(255, 255, 255, 0.85)"
+          activeOpacity={0.85}
           onPress={this.showActionSheet}
         >
           <View style={styles.listRows}>
-            <Text allowFontScaling={false} style={styles.text}>退出登录</Text>
+            <Text allowFontScaling={false} style={styles.text}>退出当前账号</Text>
             <View style={styles.textArrow}>
               <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
             </View>

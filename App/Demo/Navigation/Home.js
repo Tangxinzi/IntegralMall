@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import iconStyle from '../../Styles/Icon'
+import Toast from 'react-native-tiny-toast';
 import ViewSwiper from 'react-native-swiper';
 import StickyHeader from 'react-native-stickyheader';
 import LotteryDetails from './LotteryDetails';
@@ -14,6 +15,7 @@ import {
   FlatList,
   Platform,
   Animated,
+  AsyncStorage,
   SectionList,
   RefreshControl,
   ActivityIndicator,
@@ -27,6 +29,7 @@ class Home extends React.Component {
     this.state = {
       scrollY: new Animated.Value(0),
       data: [],
+      user: [],
       business: [],
       icons: [
         {
@@ -53,6 +56,17 @@ class Home extends React.Component {
       ]
     };
 
+    AsyncStorage.getItem('user')
+    .then((response) => {
+      this.setState({
+        user: JSON.parse(response)
+      })
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .done();
+
     this.fetchData();
     this.fetchDataLottery();
   }
@@ -61,6 +75,16 @@ class Home extends React.Component {
     this._navListener = this.props.navigation.addListener('didFocus', () => {
       this.fetchData();
       this.fetchDataLottery();
+      AsyncStorage.getItem('user')
+      .then((response) => {
+        this.setState({
+          user: JSON.parse(response)
+        })
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .done();
     });
   }
 
@@ -94,6 +118,36 @@ class Home extends React.Component {
       console.log('err: ', error)
     })
     .done();
+  }
+
+  carts(id, product_number) {
+    if (!this.state.user) {
+      Toast.show('您尚未登录')
+      return
+    }
+    fetch(`https://taupd.ferer.net/v1/api/carts`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        submit: 'create',
+        product_type: 'business',
+        id,
+        product_number,
+        sign: this.state.user.token
+      })
+    })
+    .then(response => response.json())
+    .then(responseData => {
+      console.log(responseData);
+      Toast.showSuccess('商品添加成功')
+    })
+    .catch((error) => {
+      console.log('err: ', error)
+    })
+    .done()
   }
 
   render() {
@@ -155,32 +209,41 @@ class Home extends React.Component {
             columnWrapperStyle={styles.columnStyle}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) =>
-              <TouchableHighlight
-                underlayColor='transparent'
-                style={[styles.lotteryTouch, index % 2 ? styles.lotteryTouchmarginLeft10 : '']}
-                onPress={() => {
-                  this.props.navigation.navigate('LotteryDetails', { id: item.id, title: item.product_name })
-                }}
-                underlayColor="rgba(255, 255, 255, 0.85)"
-                activeOpacity={0.9}
-              >
-                <>
-                  <Image resizeMode='cover' style={styles.lotteryLottery_img} source={{uri: item.product_image}} />
-                  <View style={styles.lotteryFoot}>
-                    <Text allowFontScaling={false} style={styles.lotteryLottery_name} numberOfLines={2}>{item.product_name}</Text>
-                    <Text allowFontScaling={false} style={styles.lotteryLottery_description} numberOfLines={1}>{item.product_business_description}</Text>
-                    <View style={styles.lotteryFooter}>
-                      <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-                        <Text allowFontScaling={false} style={styles.lotteryFinish_quantity}>{'¥' + (item.product_business_discount ? item.product_business_discount : item.product_business_price)}</Text>
-                        <Text allowFontScaling={false} style={styles.lotteryFinish_price}>{item.product_business_discount ? '¥' + item.product_business_price : ''}</Text>
-                      </View>
-                      <View style={styles.lotteryBuy}>
-                        <Text allowFontScaling={false} style={styles.lotteryBuyText}>＋</Text>
-                      </View>
+              <View style={[styles.lotteryTouch, index % 2 ? styles.lotteryTouchmarginLeft10 : '']}>
+                <TouchableHighlight
+                  underlayColor='transparent'
+                  onPress={() => {
+                    this.props.navigation.navigate('LotteryDetails', { id: item.id, title: item.product_name })
+                  }}
+                  underlayColor="rgba(255, 255, 255, 0.85)"
+                  activeOpacity={0.9}
+                >
+                  <>
+                    <Image resizeMode='cover' style={styles.lotteryLottery_img} source={{uri: item.product_image}} />
+                    <View style={styles.lotteryFoot}>
+                      <Text allowFontScaling={false} style={styles.lotteryLottery_name} numberOfLines={2}>{item.product_name}</Text>
+                      <Text allowFontScaling={false} style={styles.lotteryLottery_description} numberOfLines={1}>{item.product_business_description}</Text>
                     </View>
+                  </>
+                </TouchableHighlight>
+                <View style={styles.lotteryFooter}>
+                  <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+                    <Text allowFontScaling={false} style={styles.lotteryFinish_quantity}>{'¥' + (item.product_business_discount ? item.product_business_discount : item.product_business_price)}</Text>
+                    <Text allowFontScaling={false} style={styles.lotteryFinish_price}>{item.product_business_discount ? '¥' + item.product_business_price : ''}</Text>
                   </View>
-                </>
-              </TouchableHighlight>
+                  <TouchableHighlight
+                    style={styles.lotteryBuy}
+                    underlayColor='transparent'
+                    onPress={() => {
+                      this.carts(item.id, 1)
+                    }}
+                    underlayColor="rgba(255, 255, 255, 0.85)"
+                    activeOpacity={0.9}
+                  >
+                    <Text allowFontScaling={false} style={styles.lotteryBuyText}>＋</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
             }
           />
         </ScrollView>
@@ -253,18 +316,20 @@ const styles = {
     height: (Dimensions.get('window').width - 30) / 2,
   },
   lotteryLottery_name: {
-    fontSize: 17,
+    fontSize: 16,
     marginBottom: 5
   },
   lotteryLottery_description: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 10
+    color: '#666'
   },
   lotteryFoot: {
-    padding: 10
+    padding: 10,
+    paddingBottom: 0
   },
   lotteryFooter: {
+    padding: 10,
+    paddingTop: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

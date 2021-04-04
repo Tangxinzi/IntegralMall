@@ -54,7 +54,9 @@ class ConfirmOrder extends React.PureComponent {
         user: JSON.parse(response)
       })
 
-      this.fetch(this.state.params.cart_id)
+      // console.log(this.state.params.cart_id, this.state.user);
+
+      this.fetch()
     })
     .catch((error) => {
       console.log(error);
@@ -62,24 +64,50 @@ class ConfirmOrder extends React.PureComponent {
     .done();
   }
 
-  fetch (cart_id) {
-    fetch(`https://taupd.ferer.net/v1/api/carts/confirm?cart_id=${ cart_id }&sign=${ this.state.user.token }`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      }
-    })
-    .then(response => response.json())
-    .then(responseData => {
-      this.setState({
-        confirm: responseData
+  fetch () {
+    // 是否立即购买
+    console.log(this.state.params);
+    if (this.state.params.now == 1) {
+      fetch(`https://taupd.ferer.net/v1/api/carts/confirm?now=1&product_id=${ this.state.params.product_id }&sign=${ this.state.user.token }`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
       })
-    })
-    .catch((error) => {
-      console.log('err: ', error)
-    })
-    .done()
+      .then(response => response.json())
+      .then(responseData => {
+        this.setState({
+          confirm: responseData
+        })
+
+        console.log(this.state.confirm.user.user_address);
+      })
+      .catch((error) => {
+        console.log('err: ', error)
+      })
+      .done()
+    } else {
+      fetch(`https://taupd.ferer.net/v1/api/carts/confirm?now=0&cart_id=${ this.state.params.cart_id }&sign=${ this.state.user.token }`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
+      })
+      .then(response => response.json())
+      .then(responseData => {
+        this.setState({
+          confirm: responseData
+        })
+
+        console.log(this.state.confirm.user.user_address);
+      })
+      .catch((error) => {
+        console.log('err: ', error)
+      })
+      .done()
+    }
   }
 
   setCheck (key) {
@@ -132,7 +160,7 @@ class ConfirmOrder extends React.PureComponent {
       <View style={s.content}>
         <Text style={s.content__heading}>选择收货地址</Text>
         {
-          this.state.confirm.user.user_address.map((item, key) => {
+          this.state.confirm.user.user_address != '' && this.state.confirm.user.user_address.map((item, key) => {
             return (
               <TouchableHighlight
                 key={key}
@@ -169,7 +197,7 @@ class ConfirmOrder extends React.PureComponent {
         <>
           <ScrollView style={styles.scrollView}>
             {
-              this.state.confirm.user.user_address.map((item, key) => {
+              this.state.confirm.user.user_address != '' && this.state.confirm.user.user_address.map((item, key) => {
                 if (this.state.check == null && item.check == 'on') {
                   return (
                     <TouchableHighlight

@@ -42,7 +42,7 @@ class Integral extends React.PureComponent {
           AsyncStorage.getItem('user')
           .then((response) => {
             const parse = JSON.parse(response)
-            navigation.navigate('Web', { title: '积分记录', uri: `https://taupd.ferer.net/mobile/user/lottery/lists?sign=` + parse.token })            
+            navigation.navigate('Web', { title: '积分记录', uri: `https://taupd.ferer.net/mobile/user/lottery/lists?sign=` + parse.token })
           })
           .catch((error) => {
             console.log(error);
@@ -173,7 +173,8 @@ class Integral extends React.PureComponent {
               style={styles.flexBetween}
               underlayColor="none"
               onPress={() => {
-                this.openModal()
+                // this.openModal()
+                this.props.navigation.navigate('Web', { title: '商城积分', uri: `https://taupd.ferer.net/mobile/user/integral?sign=` + this.state.user.token })
               }}
             >
               <View style={styles.flexBetween}>
@@ -222,7 +223,7 @@ class Integral extends React.PureComponent {
                       </View>
                       <View style={styles.cartboxCon}>
                         <View style={styles.cartboxConHead}>
-                          <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name}</Text>
+                          <Text allowFontScaling={false} style={styles.cartboxConTitle} numberOfLines={2}>{item.product_name} {item.id}</Text>
                           <Text allowFontScaling={false} style={styles.conDetailMeta} numberOfLines={1}></Text>
                         </View>
                         <>

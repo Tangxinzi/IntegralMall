@@ -3,6 +3,7 @@ import iconStyle from '../../Styles/Icon'
 import ViewSwiper from 'react-native-swiper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from './assets/Icons';
+import faker from 'faker';
 import {
   Text,
   View,
@@ -70,19 +71,23 @@ class User extends React.Component {
         lottery: [
           {
             text: '积分记录',
-            img: Icon.integral
+            img: Icon.integral,
+            uri: 'https://taupd.ferer.net/mobile/user/lottery/lists?sign='
           },
           {
             text: '抢购记录',
-            img: Icon.purchase
+            img: Icon.purchase,
+            uri: 'https://taupd.ferer.net/mobile/user/lottery/purchase?sign='
           },
           {
             text: '购中记录',
-            img: Icon.winning
+            img: Icon.winning,
+            uri: 'https://taupd.ferer.net/mobile/user/lottery/winning?sign='
           },
           {
             text: '全部抢购',
-            img: Icon.all
+            img: Icon.all,
+            uri: 'https://taupd.ferer.net/mobile/user/lottery/all?sign='
           }
         ]
       },
@@ -110,7 +115,7 @@ class User extends React.Component {
           color: '#FFF',
           backgroundColor: '#ffb000',
           name: 'star',
-          uri: ''
+          uri: 'https://taupd.ferer.net/mobile/user/collections'
         },
         {
           type: 'web',
@@ -120,15 +125,15 @@ class User extends React.Component {
           name: 'chatbubbles',
           uri: 'https://taupd.ferer.net/mobile/user/feedback'
         },
-        {
-          type: 'web',
-          text: '分享下载',
-          color: '#FFF',
-          style: { top: -1 },
-          backgroundColor: '#fe4b52',
-          name: 'arrow-redo',
-          uri: ''
-        },
+        // {
+        //   type: 'web',
+        //   text: '分享下载',
+        //   color: '#FFF',
+        //   style: { top: -1 },
+        //   backgroundColor: '#fe4b52',
+        //   name: 'arrow-redo',
+        //   uri: ''
+        // },
         {
           type: 'web',
           text: '常见问题',
@@ -137,16 +142,16 @@ class User extends React.Component {
           backgroundColor: '#2095c1',
           name: 'help-circle',
           size: 25,
-          uri: ''
+          uri: 'https://taupd.ferer.net/mobile/pages/254'
         },
         {
           type: 'web',
-          text: '隐私安全',
+          text: '用户协议',
           color: '#FFF',
           style: { top: 0 },
           backgroundColor: '#ff6b00',
           name: 'shield-checkmark',
-          uri: ''
+          uri: 'https://taupd.ferer.net/mobile/pages/268'
         },
         {
           type: 'navigate',
@@ -156,7 +161,8 @@ class User extends React.Component {
           backgroundColor: '#666666',
           name: 'settings-sharp',
           uri: 'Setting'
-        }
+        },
+        {}
       ],
     };
 
@@ -257,7 +263,7 @@ class User extends React.Component {
               style={styles.userAvatarTouch}
               underlayColor="none"
               onPress={() => {
-                this.props.navigation.navigate('Web', { title: '编辑个人信息', uri: `https://taupd.ferer.net/mobile/user/profile/${ this.state.user.id }/edit` })
+                this.props.navigation.navigate('Web', { title: '编辑个人信息', uri: `https://taupd.ferer.net/mobile/user/profile/${ this.state.user.id }/edit?sign=` + this.state.user.token })
               }}
             >
               <Image resizeMode='cover' style={styles.userAvatar} source={{uri: this.state.user.avator || 'https://taupd.ferer.net/uploads/sources/2021/03/28/VCbIisXyGT9lgg97Ohcq4tiWACr766fy.png'}} />
@@ -266,7 +272,7 @@ class User extends React.Component {
               <Text style={styles.userInfotext}>{this.state.user.user_nickname}</Text>
               <View style={styles.userInfoSub}>
                 <Text style={styles.userInfoSubtext}>{this.state.user.user_phone}</Text>
-                <Text style={styles.userInfoSubtext}>青铜会员</Text>
+                <Text style={styles.userInfoSubtext}>普通账号</Text>
               </View>
             </View>
           </View>
@@ -339,6 +345,9 @@ class User extends React.Component {
                     <TouchableHighlight
                       key={key}
                       underlayColor="none"
+                      onPress={() => {
+                        this.props.navigation.navigate('Web', { title: item.text, uri: item.uri + this.state.user.token })
+                      }}
                     >
                       <>
                         <View style={iconStyle.iconCon}>
