@@ -15,7 +15,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-class Message extends React.Component {
+class MessageCategory extends React.Component {
   static navigationOptions = ({navigation, screenProps}) => ({
     headerTitle: (
       <TouchableHighlight
@@ -28,7 +28,7 @@ class Message extends React.Component {
             color: 'rgba(0, 0, 0, .9)',
             textAlign: 'center',
             marginHorizontal: 16
-          }}>消息</Text>
+          }}>{navigation.state.params.title}</Text>
         </>
       </TouchableHighlight>
     ),
@@ -43,46 +43,8 @@ class Message extends React.Component {
 
     this.state = {
       user: null,
-      data: [],
-      rows: [
-        {
-          text: '系统消息',
-          color: '#FFF',
-          style: {
-            backgroundColor: '#4b98fe',
-          },
-          name: 'notifications',
-          category: 0
-        },
-        {
-          text: '订单信息',
-          color: '#FFF',
-          style: {
-            backgroundColor: '#20c160',
-          },
-          name: 'card',
-          category: 1
-        },
-        {
-          text: '交易物流',
-          color: '#FFF',
-          style: {
-            backgroundColor: '#ffb000',
-          },
-          name: 'albums',
-          category: 2
-        },
-        {
-          text: '抢购消息',
-          color: '#FFF',
-          style: {
-            backgroundColor: '#894bfe',
-          },
-          name: 'gift',
-          category: 3
-        },
-      ]
-    };
+      data: []
+    }
 
     AsyncStorage.getItem('user')
     .then((response) => {
@@ -96,34 +58,13 @@ class Message extends React.Component {
       console.log(error);
     })
     .done();
-
-  }
-
-  componentDidMount() {
-    this._navListener = this.props.navigation.addListener('didFocus', () => {
-      AsyncStorage.getItem('user')
-      .then((response) => {
-        this.setState({
-          user: JSON.parse(response)
-        })
-
-        this.fetchData();
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .done();
-    })
-  }
-
-  componentWillUnmount() {
-    this._navListener.remove();
   }
 
   fetchData() {
-    fetch(`https://taupd.ferer.net/v1/api/message?sign=${ this.state.user.token }`)
+    fetch(`https://taupd.ferer.net/v1/api/message?category=${ this.props.navigation.state.params.category }&sign=${ this.state.user.token }`)
     .then(response => response.json())
     .then(responseData => {
+      console.log(responseData);
       this.setState({
         data: responseData
       });
@@ -137,28 +78,6 @@ class Message extends React.Component {
   render() {
     return (
       <>
-        <View style={styles.iconApps}>
-          {
-            this.state.rows.map((item, key) => {
-              return (
-                <TouchableHighlight
-                  keys={key}
-                  underlayColor="none"
-                  style={styles.iconContainer}
-                  onPress={() => {
-                      this.props.navigation.navigate('MessageCategory', { title: item.text, category: item.category })
-                    }
-                  }
-                >
-                  <>
-                    <Ionicons style={[styles.icon, {...item.style}]} name={item.name} size={20} color={'#FFF'} />
-                    <Text style={styles.text} allowFontScaling={false}>{item.text}</Text>
-                  </>
-                </TouchableHighlight>
-              )
-            })
-          }
-        </View>
         <ScrollView>
           <View style={styles.lists}>
             {
@@ -224,9 +143,7 @@ const styles = {
     backgroundColor: '#999999'
   },
   // lists
-  lists: {
-    marginTop: 10
-  },
+  lists: {},
   list: {
     padding: 10,
     backgroundColor: '#FFF',
@@ -259,4 +176,4 @@ const styles = {
   }
 }
 
-export default Message;
+export default MessageCategory;

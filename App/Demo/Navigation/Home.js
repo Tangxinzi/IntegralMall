@@ -170,6 +170,10 @@ class Home extends React.Component {
                       key={key}
                       style={styles.swiperTouch}
                       activeOpacity={0.9}
+                      underlayColor="none"
+                      onPress={() => {
+                        this.props.navigation.navigate('Web', { title: item.page_title, uri: `https://taupd.ferer.net/mobile/pages/${ item.id }?sign=${ this.state.user.token }` })
+                      }}
                     >
                       <Image resizeMode='cover' style={styles.swiperImage} source={{uri: item.page_main_img}} />
                     </TouchableHighlight>

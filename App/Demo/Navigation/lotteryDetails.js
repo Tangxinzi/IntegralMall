@@ -211,7 +211,6 @@ class LotteryDetails extends React.Component {
             // computeEmbeddedMaxWidth={(availableWidth) => {
             //   return Math.max(availableWidth, 50)
             // }}
-            ptSize='5pt'
             contentWidth={Dimensions.get('window').width}
             imagesMaxWidth={Dimensions.get('window').width}
           />
@@ -284,6 +283,7 @@ class LotteryDetails extends React.Component {
                       style={[styles.list, {marginTop: 1}]}
                       underlayColor="rgba(255, 255, 255, 0.85)"
                       activeOpacity={0.85}
+                      key={key}
                       onPress={() => {
                         this.props.navigation.navigate('Web', { title: item.title, uri: 'https://taupd.ferer.net/mobile/pages/' + item.id })
                       }}

@@ -41,6 +41,20 @@ class Setting extends React.Component {
     super(props);
 
     this.state = {};
+
+    AsyncStorage.getItem('user')
+    .then((response) => {
+      const parse = JSON.parse(response)
+      if (parse.id) {
+        this.setState({
+          user: parse
+        })
+      }
+    })
+    .catch((error) => {
+
+    })
+    .done();
   }
 
   componentWillUnmount() {
@@ -78,18 +92,9 @@ class Setting extends React.Component {
           style={[styles.list, {marginTop: 1}]}
           underlayColor="rgba(255, 255, 255, 0.85)"
           activeOpacity={0.85}
-        >
-          <View style={styles.listRows}>
-            <Text allowFontScaling={false} style={styles.text}>修改资料</Text>
-            <View style={styles.textArrow}>
-              <Ionicons name={'chevron-forward-outline'} size={20} color='#AAA' />
-            </View>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight
-          style={[styles.list, {marginTop: 1}]}
-          underlayColor="rgba(255, 255, 255, 0.85)"
-          activeOpacity={0.85}
+          onPress={() => {
+            this.props.navigation.navigate('Web', { title: '修改密码', uri: `https://taupd.ferer.net/mobile/user/profile/password?sign=${ this.state.user.token }` })
+          }}
         >
           <View style={styles.listRows}>
             <Text allowFontScaling={false} style={styles.text}>修改密码</Text>
@@ -102,6 +107,9 @@ class Setting extends React.Component {
           style={[styles.list, {marginTop: 1}]}
           underlayColor="rgba(255, 255, 255, 0.85)"
           activeOpacity={0.85}
+          onPress={() => {
+            this.props.navigation.navigate('Web', { title: '更换手机号', uri: `https://taupd.ferer.net/mobile/user/profile/phone?sign=${ this.state.user.token }` })
+          }}
         >
           <View style={styles.listRows}>
             <Text allowFontScaling={false} style={styles.text}>更换手机号</Text>
@@ -126,6 +134,9 @@ class Setting extends React.Component {
           style={[styles.list, {marginTop: 1}]}
           underlayColor="rgba(255, 255, 255, 0.85)"
           activeOpacity={0.85}
+          onPress={() => {
+            this.props.navigation.navigate('Web', { title: '分享下载', uri: `https://taupd.ferer.net/mobile/pages/271` })
+          }}
         >
           <View style={styles.listRows}>
             <Text allowFontScaling={false} style={styles.text}>分享下载</Text>
@@ -138,6 +149,9 @@ class Setting extends React.Component {
           style={[styles.list, {marginTop: 1, marginBottom: 10}]}
           underlayColor="rgba(255, 255, 255, 0.85)"
           activeOpacity={0.85}
+          onPress={() => {
+            this.props.navigation.navigate('Web', { title: '关于商城', uri: `https://taupd.ferer.net/mobile/pages/272` })
+          }}
         >
           <View style={styles.listRows}>
             <Text allowFontScaling={false} style={styles.text}>关于商城</Text>

@@ -27,6 +27,9 @@ class User extends React.Component {
 
     this.state = {
       data: [],
+      date: [
+        {}
+      ],
       user: null,
       number: [
         {
@@ -192,8 +195,8 @@ class User extends React.Component {
         this.setState({
           user: parse
         })
-        console.log(parse);
 
+        this.fetch()
         // fetch(`https://taupd.ferer.net/v1/api/user/auth?sign=` + parse.token, {
         //   method: 'GET',
         //   headers: {
@@ -233,6 +236,27 @@ class User extends React.Component {
       user: null
     })
     AsyncStorage.removeItem('user');
+  }
+
+  fetch() {
+    fetch(`https://taupd.ferer.net/v1/api/user/auth/${ this.state.user.id }?sign=${ this.state.user.token }`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .then(responseData => {
+      console.log(responseData);
+      this.setState({
+        date: responseData
+      });
+    })
+    .catch((error) => {
+      console.log('err: ', error)
+    })
+    .done()
   }
 
   render() {
@@ -278,21 +302,21 @@ class User extends React.Component {
           </View>
           <View style={iconStyle.iconContainer}>
             <View style={iconStyle.iconApps}>
-              {
-                this.state.number.map((item, key) => {
-                  return (
-                    <TouchableHighlight
-                      key={key}
-                      underlayColor="none"
-                    >
-                      <>
-                        <Text style={iconStyle.number}>{key}</Text>
-                        <Text style={iconStyle.numberText}>{item.text}</Text>
-                      </>
-                    </TouchableHighlight>
-                  )
-                })
-              }
+            {
+              this.state.date && this.state.date.map((item, key) => {
+                return (
+                  <TouchableHighlight
+                    key={key}
+                    underlayColor="none"
+                  >
+                    <>
+                      <Text style={iconStyle.number}>{item.num}</Text>
+                      <Text style={iconStyle.numberText}>{item.text}</Text>
+                    </>
+                  </TouchableHighlight>
+                )
+              })
+            }
             </View>
           </View>
           <View style={iconStyle.iconContainer}>

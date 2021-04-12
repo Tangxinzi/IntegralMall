@@ -25,6 +25,7 @@ import User from './User'
 import Login from './Login'
 import Setting from './Setting'
 import Message from './Message'
+import MessageCategory from './MessageCategory'
 import Integral from './Integral'
 import IntegralDetail from './IntegralDetail'
 import ConfirmOrder from './ConfirmOrder'
@@ -107,7 +108,7 @@ class LifeScreen extends React.Component {
 
   render() {
     return (
-      <Message />
+      <Message {...this.props} />
     );
   }
 }
@@ -320,7 +321,10 @@ const BottomNavigatorScreen = createBottomTabNavigator({
   mode: 'modal',
   headerMode: 'screen',
   initialRouteName: 'Home',
-  headerTransitionPreset: 'fade-in-place'
+  headerTransitionPreset: 'fade-in-place',
+  transitionConfig: () => ({ //切换动画
+    screenInterpolator: CardStackStyleInterpolator.forHorizontal //水平动画
+  })
 });
 
 const stackNavigator = createStackNavigator({
@@ -336,6 +340,7 @@ const stackNavigator = createStackNavigator({
   Login: { screen: Login },
   Setting: { screen: Setting },
   Message: { screen: Message },
+  MessageCategory: { screen: MessageCategory },
   Integral: { screen: Integral },
   IntegralDetail: { screen: IntegralDetail },
   ConfirmOrder: { screen: ConfirmOrder },

@@ -69,6 +69,7 @@ class Integral extends React.PureComponent {
 
     this.state = {
       isRefreshing: true,
+      date: null,
       user: null,
       lottery: []
     };
@@ -78,6 +79,7 @@ class Integral extends React.PureComponent {
       this.setState({
         user: JSON.parse(response)
       })
+      this.fetch()
     })
     .catch((error) => {
       this.setState({
@@ -85,8 +87,6 @@ class Integral extends React.PureComponent {
       })
     })
     .done();
-
-    this.fetch()
   }
 
   onRefresh() {
@@ -102,6 +102,24 @@ class Integral extends React.PureComponent {
   }
 
   fetch() {
+    fetch(`https://taupd.ferer.net/v1/api/user/auth/${ this.state.user.id }?sign=${ this.state.user.token }`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())
+    .then(responseData => {
+      this.setState({
+        date: responseData
+      });
+    })
+    .catch((error) => {
+      console.log('err: ', error)
+    })
+    .done()
+
     fetch(`https://taupd.ferer.net/v1/api/products?type=lottery`, {
       method: 'GET',
       headers: {
@@ -168,7 +186,15 @@ class Integral extends React.PureComponent {
       return (
         <>
           <View style={styles.header}>
-            <Text style={styles.headerSum}>0</Text>
+            {
+              this.state.date && this.state.date.map((item, key) => {
+                if (item.type == 'integral') {
+                  return (
+                    <Text style={styles.headerSum}>{ item.num }</Text>
+                  )
+                }
+              })
+            }
             <TouchableHighlight
               style={styles.flexBetween}
               underlayColor="none"
